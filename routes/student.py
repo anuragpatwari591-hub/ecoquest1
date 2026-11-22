@@ -7,8 +7,9 @@ from flask import (Blueprint, abort, flash, redirect, render_template, request,
 import config
 from utils.auth import login_required
 from utils.database import execute, fetch_all, fetch_one, get_db
-from utils.gamification import (leaderboard, level_info, record_activity,
-                                student_rank, topic_progress_list)
+from utils.gamification import (city_stage, daily_quests, leaderboard, level_info,
+                                record_activity, student_rank, topic_progress_list)
+from utils.ui import flash_rewards
 
 student_bp = Blueprint("student", __name__)
 
@@ -49,6 +50,8 @@ def dashboard():
                          (uid,))
     return render_template("student/dashboard.html", user=user, greeting=_greeting(),
                            info=level_info(user["total_xp"]), badge_count=badge_count,
+                           city=city_stage(level_info(user["total_xp"])["level"]),
+                           quests=daily_quests(db, uid),
                            progress=progress, todays=todays, next_lessons=next_lessons,
                            next_quizzes=next_quizzes, activity=activity,
                            rank=student_rank(db, uid))
@@ -61,7 +64,7 @@ def topics():
     rows = fetch_all(db, "SELECT t.*, (SELECT COUNT(*) FROM lessons WHERE topic_id = t.topic_id) AS n_lessons, "
                          "(SELECT COUNT(*) FROM quizzes WHERE topic_id = t.topic_id) AS n_quizzes, "
                          "(SELECT COUNT(*) FROM challenges WHERE topic_id = t.topic_id AND is_active = 1) AS n_challenges "
-                         "FROM topics t ORDER BY t.category = 'Environment' DESC, t.category, t.topic_id")
+                         "FROM topics t ORDER BY t.topic_id")
     progress = {p["topic_id"]: p["percent"] for p in topic_progress_list(db, session["user_id"])}
     return render_template("student/topics.html", topics=rows, progress=progress)
 
@@ -87,7 +90,7 @@ def topic_detail(topic_id):
 @login_required("student")
 def lesson(lesson_id):
     db, uid = get_db(), session["user_id"]
-    row = fetch_one(db, "SELECT l.*, t.name AS topic_name, t.icon, t.category FROM lessons l "
+    row = fetch_one(db, "SELECT l.*, t.name AS topic_name, t.icon FROM lessons l "
                         "JOIN topics t ON l.topic_id = t.topic_id WHERE l.lesson_id = %s", (lesson_id,))
     if not row:
         abort(404)
@@ -110,9 +113,7 @@ def complete_lesson(lesson_id):
     execute(db, "INSERT INTO user_progress (user_id, lesson_id) VALUES (%s,%s)", (uid, lesson_id))
     result = record_activity(db, uid, config.XP_LESSON, "lesson", f"Completed lesson: {row['title']}")
     db.commit()
-    flash(f"Lesson complete! +{result['xp']} XP", "success")
-    for b in result["badges"]:
-        flash(f"Badge unlocked: {b['icon']} {b['name']}", "badge")
+    flash_rewards(result, "Lesson complete!")
     return redirect(url_for("student.lesson", lesson_id=lesson_id))
 
 

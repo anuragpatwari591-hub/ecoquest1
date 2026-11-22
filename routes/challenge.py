@@ -7,6 +7,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, session, u
 from utils.auth import login_required
 from utils.database import execute, fetch_all, fetch_one, get_db
 from utils.gamification import record_activity
+from utils.ui import flash_rewards
 
 challenge_bp = Blueprint("challenge", __name__, url_prefix="/challenges")
 
@@ -59,7 +60,5 @@ def complete(challenge_id):
         flash("You already completed this challenge today. Come back tomorrow!", "info")
     else:
         db.commit()
-        flash(f"Challenge complete! +{result['xp']} XP", "success")
-        for b in result["badges"]:
-            flash(f"Badge unlocked: {b['icon']} {b['name']}", "badge")
+        flash_rewards(result, "Challenge complete!")
     return redirect(url_for("challenge.challenge_list"))

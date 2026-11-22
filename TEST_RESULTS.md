@@ -3,7 +3,7 @@
 Environment: Windows 11, Python 3.11.9, MySQL 8.4.9 (local), Flask test client, database `ecoquest_test`.
 
 ## Automated tests
-Command: `python -m pytest -q` → **62 passed** (last run; ~16 s). Full per-case table: [docs/testing.md](docs/testing.md).
+Command: `python -m pytest -q` → **68 passed** (last run; ~16 s). Full per-case table: [docs/testing.md](docs/testing.md).
 
 | File | Tests (pytest items) |
 |---|---|
@@ -11,6 +11,7 @@ Command: `python -m pytest -q` → **62 passed** (last run; ~16 s). Full per-cas
 | tests/test_quiz.py | grading, XP, attempt storage, result privacy |
 | tests/test_gamification.py | level, XP, streak, badges, leaderboard, progress (parameterised cases included) |
 | tests/test_challenges_and_admin.py | challenges, teacher and admin actions, seed integrity, FK/UNIQUE constraints |
+| tests/test_games.py | mini-games, quiz feedback lock, Eco City, daily quests |
 | tests/test_smoke.py | all main pages render per role; 404 page |
 
 A defect found by the smoke test during development (Progress page crashed for a student with no activity because PyMySQL

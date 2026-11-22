@@ -15,7 +15,9 @@ These are fictional accounts created by `init_db.py`. Change them for any real d
 2. **Dashboard** – shows XP, level, streak, badges, leaderboard position, topic-wise learning progress, today's challenge, available lessons/quizzes and recent activity.
 3. **Learn** – open a topic, pick a lesson, read the introduction, explanation, key points and eco-tip, then press *Mark as complete* to earn **+10 XP**.
 4. **Quizzes** – choose a quiz, read the instructions and press *Start quiz*. Answer using the radio buttons and the numbered question buttons; press *Submit quiz*. You earn **10 XP per correct answer** and **+50 XP** for a perfect score. The result page shows score, accuracy, XP and an answer review. All attempts are stored in your history.
-5. **Challenges** – do the real-life action, then press *Mark complete* to earn the challenge XP. Each challenge can be completed once per day.
+5. **Games** – open *Games* and play *Waste Sorting Rush* or *Pollution Detective*. Sort each item into the right bin before the 45-second timer ends; build combos. You earn 5 XP per correct item (+10 for a perfect round), once per game per day; replays are free practice.
+5a. **Eco City and daily quests** – the dashboard shows your city: it starts smoggy and gets cleaner as you level up. Four daily quests (lesson, quiz, challenge, game) give a +25 XP bonus when all are done.
+6. **Challenges** – do the real-life action, then press *Mark complete* to earn the challenge XP. Each challenge can be completed once per day.
 6. **Levels** – `Level = floor(XP / 100) + 1`. The dashboard bar shows progress to the next level.
 7. **Streak** – any lesson, quiz or challenge counts as activity for the day. Activity on consecutive days increases the streak; missing a day resets it to 1. Reaching 7, 14, 21… days gives **+100 bonus XP**.
 8. **Badges** – unlock automatically (see *Progress → Badges* for requirements).

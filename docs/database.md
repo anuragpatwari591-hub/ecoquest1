@@ -156,6 +156,7 @@ erDiagram
 | `quizzes` | number of quiz attempts ≥ rule_value |
 | `topic_challenges` | challenges completed in `topic_id` ≥ rule_value |
 | `topic_activity` | lessons + challenges completed in `topic_id` ≥ rule_value |
+| `games` | days on which a mini-game awarded XP ≥ rule_value |
 | `streak` | current streak ≥ rule_value |
 | `xp` | total XP ≥ rule_value |
 

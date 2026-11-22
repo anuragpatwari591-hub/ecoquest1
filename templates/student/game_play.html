@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{{ game.title }}{% endblock %}
+{% block content %}
+<div class="container page" style="max-width:760px">
+  <p class="small"><a href="{{ url_for('games.game_list') }}">← All games</a></p>
+  <h1>{{ game.icon }} {{ game.title }}</h1>
+  <div class="hud card" aria-live="polite">
+    <div><span class="muted small">Score</span><strong id="hudScore">0</strong></div>
+    <div><span class="muted small">Combo</span><strong id="hudCombo">0</strong></div>
+    <div><span class="muted small">Item</span><strong id="hudProgress">1/{{ items|length }}</strong></div>
+    <div><span class="muted small">Time</span><strong id="hudTime">45</strong></div>
+  </div>
+  <div class="bar lg" style="margin:.8rem 0"><span id="timeBar" style="width:100%"></span></div>
+
+  <div class="card center game-stage" id="stage">
+    <div class="game-emoji" id="itemEmoji" aria-hidden="true"></div>
+    <h2 id="itemName"></h2>
+    <p class="muted">Where does this belong?</p>
+    <div class="bin-grid" id="bins">
+      {% for b in game.bins %}<button type="button" class="bin-btn" data-bin="{{ b[0] }}"><span class="bin-emoji" aria-hidden="true">{{ b[2] }}</span>{{ b[1] }}</button>{% endfor %}
+    </div>
+    <p id="feedback" class="feedback" role="status"></p>
+  </div>
+
+  <form id="finishForm" method="post" action="{{ url_for('games.finish', key=key) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  var items = {{ items|tojson }};
+  var TOTAL_TIME = 45, i = 0, score = 0, combo = 0, bestCombo = 0, answers = {}, locked = false, timeLeft = TOTAL_TIME;
+  var $ = function (id) { return document.getElementById(id); };
+  var bins = document.querySelectorAll(".bin-btn");
+
+  function showItem() {
+    var it = items[i];
+    $("itemEmoji").textContent = it.emoji; $("itemName").textContent = it.name;
+    $("hudProgress").textContent = (i + 1) + "/" + items.length;
+    $("feedback").textContent = ""; $("feedback").className = "feedback";
+    bins.forEach(function (b) { b.disabled = false; b.classList.remove("right", "wrong"); });
+    locked = false;
+  }
+  function finish() {
+    clearInterval(timer);
+    var form = $("finishForm");
+    Object.keys(answers).forEach(function (id) {
+      var inp = document.createElement("input"); inp.type = "hidden"; inp.name = "ans_" + id; inp.value = answers[id]; form.appendChild(inp);
+    });
+    form.submit();
+  }
+  bins.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      if (locked) return; locked = true;
+      var it = items[i], chosen = btn.dataset.bin, ok = chosen === it.bin;
+      answers[it.id] = chosen;
+      bins.forEach(function (b) { b.disabled = true; if (b.dataset.bin === it.bin) b.classList.add("right"); });
+      if (ok) { score++; combo++; bestCombo = Math.max(bestCombo, combo); btn.classList.add("right"); }
+      else { combo = 0; btn.classList.add("wrong"); }
+      $("hudScore").textContent = score; $("hudCombo").textContent = combo;
+      $("feedback").className = "feedback " + (ok ? "ok" : "bad");
+      $("feedback").textContent = (ok ? "✅ Correct! " : "❌ Not quite. ") + it.why + (ok && combo >= 3 ? "  🔥 Combo x" + combo + "!" : "");
+      setTimeout(function () { i++; if (i >= items.length) finish(); else showItem(); }, ok ? 900 : 1700);
+    });
+  });
+  var timer = setInterval(function () {
+    timeLeft--; $("hudTime").textContent = timeLeft; $("timeBar").style.width = (timeLeft * 100 / TOTAL_TIME) + "%";
+    if (timeLeft <= 0) finish();
+  }, 1000);
+  showItem();
+})();
+</script>
+{% endblock %}

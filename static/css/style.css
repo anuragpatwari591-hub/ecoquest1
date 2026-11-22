@@ -161,3 +161,30 @@ details.edit summary { cursor: pointer; color: var(--green-700); font-weight: 60
   .page-head { align-items: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* ---- game elements ---- */
+.alert-levelup { background: linear-gradient(90deg, #dcfce7, #bbf7d0, #fef08a); border-color: var(--green-600); color: #14532d;
+  font-size: 1.15rem; font-weight: 800; text-align: center; animation: pop .6s ease; }
+@keyframes pop { 0% { transform: scale(.85); opacity: 0; } 60% { transform: scale(1.04); } 100% { transform: scale(1); opacity: 1; } }
+.hud { display: flex; justify-content: space-around; gap: 1rem; text-align: center; padding: .8rem; margin-bottom: 1rem; }
+.hud div { display: grid; } .hud strong { font-size: 1.5rem; color: var(--green-900); }
+.game-card .icon-lg { font-size: 3rem; }
+.game-stage { padding: 2rem 1rem; }
+.game-emoji { font-size: 5rem; line-height: 1.1; animation: pop .35s ease; }
+.bin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; margin-top: 1rem; }
+.bin-btn { display: flex; align-items: center; justify-content: center; gap: .6rem; padding: 1rem; font: inherit; font-weight: 700; font-size: 1.05rem;
+  border: 3px solid #d1d5db; background: #fff; border-radius: 16px; cursor: pointer; transition: transform .12s, border-color .12s, background .12s; }
+.bin-btn:hover:not([disabled]) { border-color: var(--green-500); background: var(--green-50); transform: translateY(-2px); }
+.bin-btn .bin-emoji { font-size: 1.8rem; }
+.bin-btn.right, .option.right { border-color: var(--green-600); background: #dcfce7; }
+.bin-btn.wrong, .option.wrong { border-color: var(--red); background: #fee2e2; }
+.feedback { min-height: 1.6em; margin: .8rem 0 0; font-weight: 600; }
+.feedback.ok { color: var(--green-700); } .feedback.bad { color: #b91c1c; }
+.city-sky { position: relative; height: 130px; border-radius: 14px; overflow: hidden; background: linear-gradient(#7dd3fc, #dcfce7); display: grid; place-items: center; }
+.city-smog { position: absolute; inset: 0; background: #6b7280; opacity: var(--smog); transition: opacity 1s; }
+.city-scene { position: relative; font-size: 2.2rem; letter-spacing: .3rem; text-align: center; }
+.bar.pollution > span { background: linear-gradient(90deg, #f59e0b, #dc2626); }
+.quest { display: flex; justify-content: space-between; align-items: center; padding: .55rem .8rem; border-radius: 12px; background: #f9fafb; margin-bottom: .45rem; font-weight: 500; }
+.quest.done { background: var(--green-100); color: var(--green-900); }
+.quest-state { font-size: .8rem; font-weight: 700; color: var(--muted); } .quest.done .quest-state { color: var(--green-700); }
+@media (max-width: 720px) { .game-emoji { font-size: 4rem; } .hud strong { font-size: 1.2rem; } }

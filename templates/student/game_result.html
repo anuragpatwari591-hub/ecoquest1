@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Round Result{% endblock %}
+{% block content %}
+<div class="container page" style="max-width:760px">
+  <div class="card center">
+    <h1>{{ game.icon }} Round complete!</h1>
+    <div class="score-ring" style="--pct: {{ (score * 100 / total)|int if total else 0 }}"><span>{{ score }}/{{ total }}</span></div>
+    {% if xp_locked %}<p><span class="chip">XP for this game was already earned today — this was practice.</span></p>
+    {% else %}<p><strong style="color:var(--green-700);font-size:1.2rem">+{{ xp }} XP</strong>{% if score == total %} <span class="chip amber">⭐ Perfect round!</span>{% endif %}</p>{% endif %}
+    <div class="row" style="justify-content:center">
+      <a class="btn" href="{{ url_for('games.play', key=key) }}">Play again</a>
+      <a class="btn btn-outline" href="{{ url_for('games.game_list') }}">All games</a>
+      <a class="btn btn-outline" href="{{ url_for('student.dashboard') }}">Dashboard</a>
+    </div>
+  </div>
+  <h2 class="section">Review</h2>
+  {% for r in review %}
+  <div class="review-item {% if not r.ok %}wrong{% endif %}">
+    <strong>{{ r.emoji }} {{ r.name }}</strong> — you chose {{ bin_names.get(r.chosen, 'nothing (time ran out)') }} {% if r.ok %}✅{% else %}❌ (correct: <strong>{{ bin_names[r.correct] }}</strong>){% endif %}
+    <br><span class="muted small">💡 {{ r.why }}</span></div>
+  {% endfor %}
+</div>
+{% endblock %}

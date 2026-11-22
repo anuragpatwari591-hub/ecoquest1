@@ -13,6 +13,7 @@ BADGE_RULES = {
     "quizzes": "Quizzes completed",
     "topic_challenges": "Challenges completed in a topic",
     "topic_activity": "Lessons + challenges in a topic",
+    "games": "Mini-games played (days)",
     "streak": "Day streak",
     "xp": "Total XP",
 }
@@ -121,18 +122,17 @@ def topics():
         name = request.form.get("name", "").strip()
         icon = request.form.get("icon", "").strip() or "🌍"
         desc = request.form.get("description", "").strip()
-        category = request.form.get("category", "").strip() or "Environment"
         topic_id = request.form.get("topic_id", type=int)
         if not name or not desc:
             flash("Name and description are required.", "danger")
         else:
             try:
                 if topic_id:
-                    execute(db, "UPDATE topics SET name=%s, icon=%s, description=%s, category=%s WHERE topic_id=%s",
-                            (name[:80], icon[:10], desc, category[:40], topic_id))
+                    execute(db, "UPDATE topics SET name=%s, icon=%s, description=%s WHERE topic_id=%s",
+                            (name[:80], icon[:10], desc, topic_id))
                 else:
-                    execute(db, "INSERT INTO topics (name, icon, description, category) VALUES (%s,%s,%s,%s)",
-                            (name[:80], icon[:10], desc, category[:40]))
+                    execute(db, "INSERT INTO topics (name, icon, description) VALUES (%s,%s,%s)",
+                            (name[:80], icon[:10], desc))
                 db.commit()
                 flash("Topic saved.", "success")
             except pymysql.IntegrityError:
@@ -140,7 +140,7 @@ def topics():
                 flash("A topic with that name already exists.", "danger")
         return redirect(url_for("admin.topics"))
     rows = fetch_all(db, "SELECT t.*, (SELECT COUNT(*) FROM lessons WHERE topic_id = t.topic_id) AS n_lessons "
-                         "FROM topics t ORDER BY t.category = 'Environment' DESC, t.category, t.topic_id")
+                         "FROM topics t ORDER BY t.topic_id")
     return render_template("admin/topics.html", topics=rows)
 
 

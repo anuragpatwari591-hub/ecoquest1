@@ -20,9 +20,10 @@ def create_app(testing=False):
     from routes.student import student_bp
     from routes.quiz import quiz_bp
     from routes.challenge import challenge_bp
+    from routes.games import games_bp
     from routes.teacher import teacher_bp
     from routes.admin import admin_bp
-    for bp in (auth_bp, student_bp, quiz_bp, challenge_bp, teacher_bp, admin_bp):
+    for bp in (auth_bp, student_bp, quiz_bp, challenge_bp, games_bp, teacher_bp, admin_bp):
         app.register_blueprint(bp)
 
     # ---- CSRF protection: every POST must carry the token stored in the session
@@ -42,7 +43,7 @@ def create_app(testing=False):
     @app.route("/")
     def index():
         db = get_db()
-        topics = fetch_all(db, "SELECT * FROM topics t ORDER BY t.category = 'Environment' DESC, t.category, t.topic_id")
+        topics = fetch_all(db, "SELECT * FROM topics ORDER BY topic_id")
         stats = fetch_one(db, "SELECT (SELECT COUNT(*) FROM lessons) AS lessons, "
                               "(SELECT COUNT(*) FROM quizzes) AS quizzes, "
                               "(SELECT COUNT(*) FROM challenges WHERE is_active = 1) AS challenges, "

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Eco Games{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><div><h1>🎮 Eco Games</h1>
+    <p class="muted">Quick rounds that test what you know. Earn {{ 5 }} XP per correct answer, +10 for a perfect round. XP can be earned once per game each day — replays are free practice.</p></div></div>
+  <div class="grid grid-2">
+    {% for g in games %}
+    <div class="card hover game-card">
+      <div class="icon-lg" aria-hidden="true">{{ g.icon }}</div>
+      <h2>{{ g.title }}</h2>
+      <p class="muted">{{ g.description }}</p>
+      <p>{% for b in g.bins %}<span class="chip">{{ b[2] }} {{ b[1] }}</span> {% endfor %}</p>
+      <div class="row between">
+        {% if g.done_today %}<span class="chip">✔ XP earned today — play again for practice</span>{% else %}<span class="chip amber">Up to +50 XP today</span>{% endif %}
+        <a class="btn" href="{{ url_for('games.play', key=g.key) }}">▶ Play</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

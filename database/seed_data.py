@@ -148,6 +148,8 @@ BADGES = [
     ("Water Guardian", "Complete 3 water-conservation lessons or challenges.", "💧", "topic_activity", 3, "Water Conservation"),
     ("7-Day Streak", "Stay active for seven days in a row.", "🔥", "streak", 7, None),
     ("Eco Champion", "Reach 1000 XP.", "🏆", "xp", 1000, None),
+    ("Game On", "Play your first eco mini-game.", "🎮", "games", 1, None),
+    ("Sorting Star", "Play eco mini-games on 5 different days.", "⭐", "games", 5, None),
     ("Energy Explorer", "Complete 3 renewable-energy lessons or challenges.", "⚡", "topic_activity", 3, "Renewable Energy"),
 ]
 

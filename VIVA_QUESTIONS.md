@@ -127,3 +127,9 @@ Answers are short and tied to this project's actual implementation.
 110. **What is feasibility study?** Checking technical, economic, operational and schedule viability.
 111. **What is deployment?** Making the application run on a server; prepared for Railway with `gunicorn`.
 112. **Why a separate test database?** Tests delete and recreate data; it protects demo/real data.
+113. **How is EcoQuest gamified, beyond points?** Eco City that gets cleaner with each level, daily quests with a bonus, timed mini-games with combos, quiz instant feedback, badges, streaks and a leaderboard.
+114. **How does the Eco City work?** `city_stage(level)` returns pollution = max(5, 95 − 10×(level−1)) and a scene/name; the dashboard shows it with a progress bar.
+115. **How do daily quests work?** `daily_quests()` checks `activity_log` for today's lesson, quiz, challenge and game; when all four exist, `record_activity()` adds a +25 XP bonus once per day.
+116. **How are the mini-games protected from cheating?** The server picks the items, stores them in the session and re-grades the submitted answers; XP can be earned once per game per day. It is a casual game, so this is practical rather than absolute protection.
+117. **How does quiz instant feedback stay fair?** The browser asks `/quiz/<id>/check`; the first choice for each question is locked in the session and that locked choice is what is graded on submit.
+118. **How is a level-up detected?** `record_activity()` compares the level before and after adding XP and returns `level_up`; `flash_rewards()` shows the message.

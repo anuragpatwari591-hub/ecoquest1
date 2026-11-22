@@ -1,6 +1,6 @@
 """Smoke test: every main page renders (HTTP 200) for the right role (TC-47 .. TC-49)."""
 STUDENT_PAGES = ["/", "/student/dashboard", "/student/topics", "/student/topics/1", "/student/lessons/1",
-                 "/quiz/", "/quiz/1", "/quiz/1/take", "/quiz/history", "/challenges/",
+                 "/quiz/", "/quiz/1", "/quiz/1/take", "/quiz/history", "/challenges/", "/games/", "/games/waste-sort", "/games/pollution-detective",
                  "/student/leaderboard", "/student/leaderboard?class_name=Class 10-A", "/student/progress", "/student/profile"]
 TEACHER_PAGES = ["/teacher/dashboard", "/teacher/students", "/teacher/students/3", "/teacher/quizzes",
                  "/teacher/quizzes/1/questions", "/teacher/challenges", "/student/profile"]

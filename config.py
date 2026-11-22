@@ -39,3 +39,6 @@ XP_PERFECT_QUIZ_BONUS = 50
 XP_STREAK_BONUS = 100      # awarded every time the streak reaches a multiple of 7
 STREAK_BONUS_DAYS = 7
 XP_PER_LEVEL = 100         # level = XP // 100 + 1
+XP_GAME_PER_CORRECT = 5    # mini-games: per correct answer (+ perfect bonus below)
+XP_GAME_PERFECT_BONUS = 10
+XP_DAILY_QUEST_BONUS = 25  # bonus for finishing all four daily quests

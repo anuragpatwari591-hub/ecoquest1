@@ -28,8 +28,7 @@ CREATE TABLE IF NOT EXISTS topics (
     topic_id    INT AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(80) NOT NULL UNIQUE,
     icon        VARCHAR(10) NOT NULL DEFAULT '🌍',
-    description TEXT NOT NULL,
-    category    VARCHAR(40) NOT NULL DEFAULT 'Environment'   -- groups subjects: Environment, B.Tech ...
+    description TEXT NOT NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS lessons (

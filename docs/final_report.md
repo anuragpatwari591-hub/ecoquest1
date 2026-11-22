@@ -56,10 +56,11 @@ teacher and admin functionality; `utils/gamification.py` holds the business rule
 * **Challenges:** once-per-day completion enforced by a UNIQUE key and a code check.
 * **Analytics:** SQL aggregate queries feeding Chart.js (topic progress, quiz scores, participation, challenge counts).
 * **Teacher/Admin:** CRUD for quizzes, questions, challenges, users, topics, lessons and badges.
+* **Game layer:** Eco City (pollution level falls as the level rises), daily quests with a bonus, level-up messages, two sorting mini-games graded on the server, and quiz instant feedback with server-side answer locking.
 * **UI:** custom CSS (green palette, cards, progress bars), responsive via media queries, basic accessibility features.
 
 ## Chapter 10 — Testing
-62 pytest tests (54 documented test cases) executed against a separate MySQL database; all passed in the last run
+68 pytest tests (60 documented test cases) executed against a separate MySQL database; all passed in the last run
 (details: [testing.md](testing.md), [../TEST_RESULTS.md](../TEST_RESULTS.md)). Manual browser checks: student dashboard,
 quiz navigation, teacher dashboard charts (no console errors), landing page at 375 px width without horizontal scroll.
 Not performed: load testing, formal accessibility audit, cross-browser testing, penetration testing.

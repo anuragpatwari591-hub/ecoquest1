@@ -5,10 +5,10 @@ All tests are automated with **pytest** and run against a separate MySQL databas
 
 Run: `python -m pytest -v`
 
-Last executed: **2026-11-22** — pytest summary line: `62 passed in 18.06s`
+Last executed: **2026-11-22** — pytest summary line: `68 passed in 19.82s`
 
 Test case mapping: each `TC-xx` below is the comment on the corresponding test function in `tests/`.
-Parameterised tests count as one test case here. Total documented test cases: **54** — passed: **54**.
+Parameterised tests count as one test case here. Total documented test cases: **60** — passed: **60**.
 
 | Test Case ID | Description | Precondition | Steps | Expected Result | Actual Result | Status |
 |---|---|---|---|---|---|---|
@@ -62,10 +62,16 @@ Parameterised tests count as one test case here. Total documented test cases: **
 | TC-48 | Teacher pages render | Fresh seeded test database (ecoquest_test) | GET 7 teacher pages as teacher | All HTTP 200 | As expected | Passed |
 | TC-49 | Admin pages render | Fresh seeded test database (ecoquest_test) | GET admin pages and all teacher pages as admin | All HTTP 200 | As expected | Passed |
 | TC-50 | Custom 404 page | Fresh seeded test database (ecoquest_test) | GET /no-such-page | HTTP 404 with friendly message | As expected | Passed |
-| TC-51 | B.Tech content loaded | Fresh seeded test database (ecoquest_test) | Count B.Tech topics, lessons, questions | 13 subjects, 39 lessons, 78 questions; 6 environment topics | As expected | Passed |
-| TC-52 | B.Tech seeding repeatable | Fresh seeded test database (ecoquest_test) | Run seed_btech a second time | 0 subjects added; topic count unchanged | As expected | Passed |
-| TC-53 | Topics grouped by category | Fresh seeded test database (ecoquest_test) | GET /student/topics | Page shows both category headings and Python Programming | As expected | Passed |
-| TC-54 | B.Tech lessons use XP and badges | Fresh seeded test database (ecoquest_test) | Complete the 3 Python lessons | +30 XP and Python Pioneer badge | As expected | Passed |
+| TC-51 | Mini-game pages | Fresh seeded test database (ecoquest_test) | GET /games/, /games/waste-sort, unknown game | 200, 200, 404 | As expected | Passed |
+| TC-52 | Perfect game round | Fresh seeded test database (ecoquest_test) | Start Waste Sorting round, submit all correct | 8x5 + 10 XP and Game On badge | As expected | Passed |
+| TC-53 | Daily XP cap for games | Fresh seeded test database (ecoquest_test) | Play the same game twice | Second round shows practice message; XP not doubled | As expected | Passed |
+| TC-54 | Wrong game answers | Fresh seeded test database (ecoquest_test) | Submit all wrong bins | 0/8 and 0 XP | As expected | Passed |
+| TC-55 | Game submit without a round | Fresh seeded test database (ecoquest_test) | POST finish without starting | Redirect; no XP | As expected | Passed |
+| TC-56 | Game grading unit test | Fresh seeded test database (ecoquest_test) | grade_game and game_xp with mixed/invalid answers | Correct score, invalid bin counts as unanswered, XP formula | As expected | Passed |
+| TC-57 | Quiz instant feedback lock | Fresh seeded test database (ecoquest_test) | Check a wrong option, check the right one, submit the right one | First choice stays locked and is graded | As expected | Passed |
+| TC-58 | Quiz check validation | Fresh seeded test database (ecoquest_test) | Send an option from another question | HTTP 400 | As expected | Passed |
+| TC-59 | Eco City stages | Fresh seeded test database (ecoquest_test) | city_stage for levels 1, 5, 10 | Pollution 95/55/5; names and air quality change | As expected | Passed |
+| TC-60 | Daily quests bonus | Fresh seeded test database (ecoquest_test) | Do lesson, challenge, quiz, game in one day | Quest bonus awarded once; total XP matches | As expected | Passed |
 
 ## What is NOT covered by automated tests
 

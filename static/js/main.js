@@ -50,6 +50,41 @@ document.querySelectorAll("form[data-confirm]").forEach(function (form) {
       navButtons[idx].classList.toggle("answered", answered);
     });
   }
+  // Instant feedback: the server checks the first choice for each question and locks it
+  var combo = 0, correctCount = 0, answeredCount = 0;
+  questions.forEach(function (q) {
+    q.addEventListener("change", function (e) {
+      var radio = e.target;
+      if (!radio.matches("input[type=radio]") || q.dataset.locked) return;
+      q.dataset.locked = "1";
+      var data = new FormData();
+      data.append("csrf_token", form.dataset.csrf); data.append("question_id", q.dataset.qid); data.append("option_id", radio.value);
+      fetch(form.dataset.checkUrl, { method: "POST", body: data, credentials: "same-origin" })
+        .then(function (r) { if (!r.ok) throw new Error("check failed"); return r.json(); })
+        .then(function (res) {
+          q.querySelectorAll("input[type=radio]").forEach(function (inp) {
+            var lab = inp.closest(".option");
+            if (String(res.correct_id) === inp.value) lab.classList.add("right");
+            else if (inp.checked) lab.classList.add("wrong");
+            if (inp.checked) {
+              var hidden = document.createElement("input");
+              hidden.type = "hidden"; hidden.name = inp.name; hidden.value = inp.value; form.appendChild(hidden);
+            }
+            inp.disabled = true;
+          });
+          answeredCount++;
+          if (res.is_correct) { combo++; correctCount++; } else { combo = 0; }
+          var fb = q.querySelector("[data-feedback]");
+          fb.className = "feedback " + (res.is_correct ? "ok" : "bad");
+          fb.textContent = (res.is_correct ? "✅ Correct! +10 XP" : "❌ Not quite.") + (res.explanation ? " " + res.explanation : "") +
+            (res.is_correct && combo >= 3 ? "  🔥 Combo x" + combo + "!" : "");
+          document.getElementById("quizCombo").textContent = combo;
+          document.getElementById("quizCorrect").textContent = correctCount;
+          document.getElementById("quizAnswered").textContent = answeredCount + "/" + questions.length;
+        })
+        .catch(function () { q.dataset.locked = ""; });
+    });
+  });
   prev.addEventListener("click", function () { if (current > 0) show(current - 1); });
   next.addEventListener("click", function () { if (current < questions.length - 1) show(current + 1); });
   navButtons.forEach(function (b, idx) { b.addEventListener("click", function () { show(idx); }); });

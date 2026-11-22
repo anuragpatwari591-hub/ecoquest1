@@ -86,14 +86,57 @@ def add_xp(conn, user_id, amount, activity, description):
 
 
 def record_activity(conn, user_id, amount, activity, description, today=None):
-    """Award XP for an eligible activity, update the streak and check badges.
+    """Award XP for an eligible activity, update the streak, daily quests and badges.
 
-    Returns a dict: {'xp': total XP gained (incl. streak bonus), 'badges': [new badge rows]}
+    Returns a dict: {'xp': total XP gained (incl. bonuses), 'bonus': streak bonus,
+    'quest_bonus': daily-quest bonus, 'level_up': new level or None, 'badges': [new badge rows]}
     """
+    old_level = calculate_level(fetch_one(conn, "SELECT total_xp FROM users WHERE user_id = %s", (user_id,))["total_xp"])
     add_xp(conn, user_id, amount, activity, description)
     bonus = update_streak(conn, user_id, today)
+    quest_bonus = 0
+    if activity in QUEST_ACTIVITIES and daily_quests(conn, user_id)["all_done"] and not fetch_one(
+            conn, "SELECT 1 AS x FROM activity_log WHERE user_id = %s AND activity = 'quest' "
+                  "AND DATE(created_at) = CURDATE()", (user_id,)):
+        quest_bonus = config.XP_DAILY_QUEST_BONUS
+        add_xp(conn, user_id, quest_bonus, "quest", "Daily quests complete bonus")
     new_badges = check_badges(conn, user_id)
-    return {"xp": amount + bonus, "bonus": bonus, "badges": new_badges}
+    new_level = calculate_level(fetch_one(conn, "SELECT total_xp FROM users WHERE user_id = %s", (user_id,))["total_xp"])
+    return {"xp": amount + bonus + quest_bonus, "bonus": bonus, "quest_bonus": quest_bonus,
+            "level_up": new_level if new_level > old_level else None, "badges": new_badges}
+
+
+# ---------------------------------------------------------------- daily quests
+QUEST_ACTIVITIES = ("lesson", "quiz", "challenge", "game")
+QUEST_LABELS = {"lesson": ("📖", "Complete a lesson"), "quiz": ("🧠", "Take a quiz"),
+                "challenge": ("🌿", "Do an eco challenge"), "game": ("🎮", "Play a mini-game")}
+
+
+def daily_quests(conn, user_id):
+    """Four simple quests; each is done when the student has that kind of activity today."""
+    rows = fetch_all(conn, "SELECT DISTINCT activity FROM activity_log WHERE user_id = %s "
+                           "AND DATE(created_at) = CURDATE()", (user_id,))
+    done_today = {r["activity"] for r in rows}
+    quests = [{"key": k, "icon": QUEST_LABELS[k][0], "label": QUEST_LABELS[k][1], "done": k in done_today}
+              for k in QUEST_ACTIVITIES]
+    return {"quests": quests, "done": sum(q["done"] for q in quests), "all_done": all(q["done"] for q in quests),
+            "bonus": config.XP_DAILY_QUEST_BONUS}
+
+
+# ---------------------------------------------------------------- Eco City
+def city_stage(level):
+    """The student's Eco City gets cleaner as the level rises (pollution 95% at level 1 ... 5% at level 10+)."""
+    pollution = max(5, 95 - (level - 1) * 10)
+    if level < 3:
+        name, scene = "Smoggy Town", "🏭 🌫️ 🏚️ 🚗 💨"
+    elif level < 5:
+        name, scene = "Awakening Town", "🏘️ 🌱 🚌 🏭 🌤️"
+    elif level < 8:
+        name, scene = "Green Neighbourhood", "🏡 🌳 🚲 ☀️ 🌻"
+    else:
+        name, scene = "Eco City", "🏙️ 🌳 🚋 ☀️ 🦋 🌈"
+    air = "Poor" if pollution > 70 else "Moderate" if pollution > 40 else "Good" if pollution > 20 else "Excellent"
+    return {"name": name, "scene": scene, "pollution": pollution, "air": air}
 
 
 # ---------------------------------------------------------------- badges
@@ -117,6 +160,8 @@ def _badge_progress_value(conn, user_id, badge):
         args = (user_id, topic, user_id, topic)
     elif rule == "streak":
         sql, args = "SELECT streak AS n FROM users WHERE user_id = %s", (user_id,)
+    elif rule == "games":
+        sql, args = "SELECT COUNT(*) AS n FROM activity_log WHERE user_id = %s AND activity = 'game'", (user_id,)
     elif rule == "xp":
         sql, args = "SELECT total_xp AS n FROM users WHERE user_id = %s", (user_id,)
     else:
@@ -152,7 +197,7 @@ def topic_progress(conn, user_id):
     """Per-topic progress % = (completed lessons + completed distinct challenges + quizzes taken)
     divided by (lessons + challenges + quizzes) available in that topic."""
     return fetch_all(conn, """
-        SELECT t.topic_id, t.name, t.icon, t.category,
+        SELECT t.topic_id, t.name, t.icon,
                (SELECT COUNT(*) FROM lessons l WHERE l.topic_id = t.topic_id) AS lessons_total,
                (SELECT COUNT(*) FROM user_progress up JOIN lessons l ON up.lesson_id = l.lesson_id
                  WHERE up.user_id = %s AND l.topic_id = t.topic_id) AS lessons_done,

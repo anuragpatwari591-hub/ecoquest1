@@ -24,10 +24,27 @@
   </div>
 
   <div class="grid grid-2 section">
+    <div class="card city" style="--smog: {{ city.pollution / 100 }}">
+      <div class="city-sky"><div class="city-smog"></div><div class="city-scene" aria-hidden="true">{{ city.scene }}</div></div>
+      <h2 style="margin-top:.8rem">🌍 Your Eco City: {{ city.name }}</h2>
+      <p class="muted small" style="margin:0 0 .5rem">Level up to clean the air. Air quality: <strong>{{ city.air }}</strong></p>
+      <div class="progress-row" style="margin:0"><div class="top"><span>Pollution level</span><span>{{ city.pollution }}%</span></div>
+        <div class="bar pollution" role="progressbar" aria-valuenow="{{ city.pollution }}" aria-valuemin="0" aria-valuemax="100" aria-label="Pollution level in your Eco City"><span data-width="{{ city.pollution }}" style="width:0"></span></div></div>
+    </div>
+    <div class="card">
+      <h2>🎯 Daily Quests <span class="chip amber">{{ quests.done }}/4</span></h2>
+      <p class="muted small" style="margin:0 0 .6rem">Finish all four today for a <strong>+{{ quests.bonus }} XP</strong> bonus.</p>
+      {% for q in quests.quests %}
+      <div class="quest {% if q.done %}done{% endif %}"><span aria-hidden="true">{{ q.icon }}</span> {{ q.label }}<span class="quest-state">{% if q.done %}✔ Done{% else %}To do{% endif %}</span></div>
+      {% endfor %}
+      <a class="btn btn-sm" style="margin-top:.7rem" href="{{ url_for('games.game_list') }}">🎮 Play a game</a>
+    </div>
+  </div>
+
+  <div class="grid grid-2 section">
     <div class="card">
       <h2>Learning Progress</h2>
       {% for p in progress %}
-      {% if loop.first or loop.previtem.category != p.category %}<h3 style="margin:.8rem 0 .4rem">{{ p.category }}</h3>{% endif %}
       <div class="progress-row">
         <div class="top"><span>{{ p.icon }} {{ p.name }}</span><span>{{ p.percent }}%</span></div>
         <div class="bar" role="progressbar" aria-valuenow="{{ p.percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ p.name }} progress">

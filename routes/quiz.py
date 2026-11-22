@@ -1,11 +1,12 @@
 """Student quiz module: list, instructions, take, submit, result, history."""
-from flask import (Blueprint, abort, flash, redirect, render_template, request,
-                   session, url_for)
+from flask import (Blueprint, abort, flash, jsonify, redirect, render_template,
+                   request, session, url_for)
 
 from utils.auth import login_required
 from utils.database import execute, fetch_all, fetch_one, get_db
 from utils.gamification import (calculate_accuracy, calculate_quiz_xp,
                                 record_activity)
+from utils.ui import flash_rewards
 
 quiz_bp = Blueprint("quiz", __name__, url_prefix="/quiz")
 
@@ -75,6 +76,7 @@ def take(quiz_id):
     if not questions:
         flash("This quiz has no questions yet.", "warning")
         return redirect(url_for("quiz.quiz_intro", quiz_id=quiz_id))
+    session.pop(f"quiz_{quiz_id}", None)      # a new attempt starts with no locked answers
     for q in questions:                       # never send the correct answer to the browser
         for o in q["options"]:
             o.pop("is_correct")
@@ -91,7 +93,10 @@ def submit(quiz_id):
     questions = load_questions(db, quiz_id)
     if not questions:
         abort(400, "This quiz has no questions.")
-    score, answers = grade(questions, request.form)
+    submitted = request.form.to_dict()
+    for qid, option_id in session.pop(f"quiz_{quiz_id}", {}).items():
+        submitted[f"q_{qid}"] = str(option_id)        # answers already revealed are locked in
+    score, answers = grade(questions, submitted)
     total = len(questions)
     xp = calculate_quiz_xp(score, total)
     attempt_id = execute(db, "INSERT INTO quiz_attempts (user_id, quiz_id, score, total_questions, xp_earned) "
@@ -101,11 +106,29 @@ def submit(quiz_id):
                     "VALUES (%s,%s,%s,%s)", (attempt_id, qid, selected, correct))
     result = record_activity(db, uid, xp, "quiz", f"Quiz '{quiz['title']}': {score}/{total}")
     db.commit()
-    for b in result["badges"]:
-        flash(f"Badge unlocked: {b['icon']} {b['name']}", "badge")
-    if result["bonus"]:
-        flash(f"Streak bonus! +{result['bonus']} XP", "success")
+    flash_rewards(result, f"Quiz complete! {score}/{total} correct.")
     return redirect(url_for("quiz.result", attempt_id=attempt_id))
+
+
+@quiz_bp.route("/<int:quiz_id>/check", methods=["POST"])
+@login_required("student")
+def check(quiz_id):
+    """Instant feedback for one question. The first choice is locked: asking again returns the same result,
+    and the locked choice is what gets graded on submit (so revealing the answer cannot be used to change it)."""
+    qid = request.form.get("question_id", type=int)
+    option_id = request.form.get("option_id", type=int)
+    db = get_db()
+    options = fetch_all(db, "SELECT o.option_id, o.is_correct, q.explanation FROM options o "
+                            "JOIN questions q ON o.question_id = q.question_id "
+                            "WHERE q.question_id = %s AND q.quiz_id = %s", (qid, quiz_id))
+    if not options or option_id not in {o["option_id"] for o in options}:
+        abort(400, "Invalid question or option.")
+    locked = session.get(f"quiz_{quiz_id}", {})
+    chosen = locked.setdefault(str(qid), option_id)
+    session[f"quiz_{quiz_id}"] = locked
+    correct_id = next(o["option_id"] for o in options if o["is_correct"])
+    return jsonify(chosen=chosen, correct_id=correct_id, is_correct=chosen == correct_id,
+                   explanation=options[0]["explanation"] or "")
 
 
 @quiz_bp.route("/result/<int:attempt_id>")

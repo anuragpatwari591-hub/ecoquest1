@@ -1,7 +1,7 @@
 """Create the EcoQuest tables and load demo data.
 
 Usage:
-    python init_db.py            # create/upgrade tables and load study content (no fake users)
+    python init_db.py            # create tables and load the environmental content (no fake users)
     python init_db.py --demo     # also create fictional demo accounts and sample classmate activity
     python init_db.py --reset    # DROP all tables first (development only!)
 """
@@ -12,7 +12,7 @@ from datetime import date, timedelta
 import pymysql
 
 import config
-from database import btech_data, seed_data
+from database import seed_data
 from utils.auth import hash_password
 from utils.database import connect, execute, fetch_one
 from utils.gamification import check_badges, add_xp
@@ -71,46 +71,14 @@ def seed_content(conn):
     conn.commit()
 
 
-def upgrade_schema(conn):
-    """Add columns introduced after the first release (safe to run repeatedly)."""
-    has = fetch_one(conn, "SELECT COUNT(*) AS n FROM information_schema.columns "
-                          "WHERE table_schema = DATABASE() AND table_name = 'topics' AND column_name = 'category'")
-    if not has["n"]:
-        execute(conn, "ALTER TABLE topics ADD COLUMN category VARCHAR(40) NOT NULL DEFAULT 'Environment'")
-        conn.commit()
-
-
-def seed_btech(conn):
-    """Load the B.Tech study subjects. Idempotent: subjects that already exist are skipped."""
-    added = 0
-    for cat, name, icon, desc, lessons, qtitle, qdesc, questions in btech_data.SUBJECTS:
-        if fetch_one(conn, "SELECT 1 AS x FROM topics WHERE name = %s", (name,)):
-            continue
-        tid = execute(conn, "INSERT INTO topics (name, icon, description, category) VALUES (%s,%s,%s,%s)",
-                      (name, icon, desc, cat))
-        for title, diff, intro, expl, points, tip in lessons:
-            execute(conn, "INSERT INTO lessons (topic_id, title, difficulty, introduction, explanation, key_points, eco_tip) "
-                          "VALUES (%s,%s,%s,%s,%s,%s,%s)", (tid, title, diff, intro, expl, "\n".join(points), tip))
-        qid_quiz = execute(conn, "INSERT INTO quizzes (topic_id, title, description) VALUES (%s,%s,%s)", (tid, qtitle, qdesc))
-        for text, opts, correct, why in questions:
-            qid = execute(conn, "INSERT INTO questions (quiz_id, question_text, explanation) VALUES (%s,%s,%s)",
-                          (qid_quiz, text, why))
-            for i, opt in enumerate(opts):
-                execute(conn, "INSERT INTO options (question_id, option_text, is_correct) VALUES (%s,%s,%s)",
-                        (qid, opt, 1 if i == correct else 0))
-        added += 1
-    for topic, title, desc, diff, xp in btech_data.CHALLENGES:
-        t = fetch_one(conn, "SELECT topic_id FROM topics WHERE name = %s", (topic,))
-        if t and not fetch_one(conn, "SELECT 1 AS x FROM challenges WHERE title = %s", (title,)):
-            execute(conn, "INSERT INTO challenges (topic_id, title, description, difficulty, xp_reward) VALUES (%s,%s,%s,%s,%s)",
-                    (t["topic_id"], title, desc, diff, xp))
-    for name, desc, icon, rule, value, topic in btech_data.BADGES:
-        t = fetch_one(conn, "SELECT topic_id FROM topics WHERE name = %s", (topic,))
-        if t and not fetch_one(conn, "SELECT 1 AS x FROM badges WHERE name = %s", (name,)):
+def ensure_badges(conn):
+    """Add badges that were introduced after the first release (matched by name, safe to repeat)."""
+    for name, desc, icon, rule, value, topic in seed_data.BADGES:
+        if not fetch_one(conn, "SELECT 1 AS x FROM badges WHERE name = %s", (name,)):
+            t = fetch_one(conn, "SELECT topic_id FROM topics WHERE name = %s", (topic,)) if topic else None
             execute(conn, "INSERT INTO badges (name, description, icon, rule_type, rule_value, topic_id) VALUES (%s,%s,%s,%s,%s,%s)",
-                    (name, desc, icon, rule, value, t["topic_id"]))
+                    (name, desc, icon, rule, value, t["topic_id"] if t else None))
     conn.commit()
-    return added
 
 
 def seed_users(conn):
@@ -179,12 +147,10 @@ def init(reset=False, demo_users=False, with_sample_activity=False):
         if reset:
             drop_all(conn)
         run_schema(conn)
-        upgrade_schema(conn)
         if fetch_one(conn, "SELECT COUNT(*) AS n FROM roles")["n"] == 0:
             seed_content(conn)
             print("Environmental content loaded.")
-        added = seed_btech(conn)
-        print(f"B.Tech study subjects added: {added}")
+        ensure_badges(conn)
         if demo_users and fetch_one(conn, "SELECT COUNT(*) AS n FROM users")["n"] == 0:
             seed_users(conn)
             print("Demo accounts created (fictional; see docs/user_manual.md).")

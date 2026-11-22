@@ -3,18 +3,20 @@
 {% block content %}
 <div class="container page" style="max-width:780px">
   <h1>{{ quiz.title }}</h1>
+  <div class="hud card"><div><span class="muted small">Combo</span><strong id="quizCombo">0</strong></div><div><span class="muted small">Correct</span><strong id="quizCorrect">0</strong></div><div><span class="muted small">Answered</span><strong id="quizAnswered">0/{{ questions|length }}</strong></div></div>
   <div class="qnav" aria-label="Question navigation">
     {% for q in questions %}<button type="button" aria-label="Go to question {{ loop.index }}">{{ loop.index }}</button>{% endfor %}
   </div>
-  <form id="quizForm" method="post" action="{{ url_for('quiz.submit', quiz_id=quiz.quiz_id) }}">
+  <form id="quizForm" method="post" action="{{ url_for('quiz.submit', quiz_id=quiz.quiz_id) }}" data-check-url="{{ url_for('quiz.check', quiz_id=quiz.quiz_id) }}" data-csrf="{{ csrf_token }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     {% for q in questions %}
-    <fieldset class="quiz-q card" style="border:0">
+    <fieldset class="quiz-q card" style="border:0" data-qid="{{ q.question_id }}">
       <legend class="muted small">Question {{ loop.index }}/{{ questions|length }}</legend>
       <h2>{{ q.question_text }}</h2>
       {% for o in q.options %}
       <label class="option"><input type="radio" name="q_{{ q.question_id }}" value="{{ o.option_id }}"> {{ o.option_text }}</label>
       {% endfor %}
+      <p class="feedback" data-feedback role="status"></p>
     </fieldset>
     {% endfor %}
     <div class="row between section">

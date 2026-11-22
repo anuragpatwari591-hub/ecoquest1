@@ -17,11 +17,19 @@ participation by combining lessons, quizzes, real-life challenges and gamificati
 ## Features
 | Role | Features |
 |---|---|
-| Student | Register/login, dashboard, topics & lessons, quizzes with review, challenges, XP & levels, badges, daily streak, leaderboard (class/institution filter), progress charts, profile |
+| Student | Register/login, dashboard with **Eco City** and **daily quests**, topics & lessons, quizzes with instant feedback and combos, challenges, **mini-games** (Waste Sorting Rush, Pollution Detective), XP & levels with level-up celebrations, badges, daily streak, leaderboard (class/institution filter), progress charts, profile |
 | Teacher | Dashboard with 4 charts, student list & detail, create quizzes/questions, create challenges |
 | Admin | Statistics, manage users, topics, lessons, badges (+ all teacher pages) |
 
-Built-in content: 6 environmental topics + 13 B.Tech study subjects (CSE/IT core and first-year common) = 51 lessons, 19 quizzes (110 questions), 20 challenges, 11 badges. The B.Tech lessons are original concise revision notes; admins can add more subjects, lessons and quizzes from the Admin pages.
+Built-in content: 6 environmental topics (Climate Change, Pollution, Waste Management, Water Conservation, Renewable Energy, Biodiversity), 12 lessons, 6 quizzes (32 questions), 12 challenges, 2 mini-games and 9 badges. Admins and teachers can add more topics, lessons, quizzes and challenges from their pages.
+
+## How it is gamified
+* **XP and levels** (level = floor(XP/100)+1) with a level-up celebration.
+* **Eco City:** your city starts smoggy (95% pollution) and gets cleaner as you level up.
+* **Daily quests:** lesson, quiz, challenge and mini-game; finish all four for +25 XP.
+* **Mini-games:** timed sorting rounds with combos and instant feedback (XP once per game per day).
+* **Quizzes:** instant right/wrong feedback, explanations and combo counter (answers are locked on the server).
+* **Badges, streaks (+100 XP every 7 days) and a leaderboard.**
 
 ## Technology stack
 HTML5 · CSS3 · vanilla JavaScript · Chart.js (CDN) · Python 3.11 · Flask · PyMySQL · MySQL 8 · pytest · Git
@@ -54,7 +62,7 @@ Database setup details: [docs/deployment.md](docs/deployment.md) · schema: [dat
 ```powershell
 python -m pytest -v
 ```
-Uses a separate `ecoquest_test` database. 62 automated tests (54 documented test cases) — see [docs/testing.md](docs/testing.md) and [TEST_RESULTS.md](TEST_RESULTS.md).
+Uses a separate `ecoquest_test` database. 68 automated tests (60 documented test cases) — see [docs/testing.md](docs/testing.md) and [TEST_RESULTS.md](TEST_RESULTS.md).
 
 ## Deployment
 Prepared for Railway (`Procfile`, environment-based config) but **not deployed**. See [docs/deployment.md](docs/deployment.md).

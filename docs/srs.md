@@ -58,6 +58,9 @@ Users have a browser and internet access; MySQL is available; environment variab
 | FR-15 | Teacher dashboard (students, active, avg score, attempts, challenges) with 4 charts | Implemented, manually verified |
 | FR-16 | Teacher can view students, create quizzes, add/delete questions, create challenges | Implemented, tested |
 | FR-17 | Admin dashboard with platform statistics and charts | Implemented, manually verified |
+| FR-19 | Eco City visualisation that reflects the level; daily quests with a bonus; level-up notification | Implemented, tested |
+| FR-20 | Two mini-games graded on the server with a once-per-day XP cap | Implemented, tested |
+| FR-21 | Quiz instant feedback with server-side answer locking | Implemented, tested |
 | FR-18 | Admin can manage users, topics, lessons, quizzes/questions (via teacher pages), challenges, badges | Implemented, partly tested |
 
 ## 4. Non-Functional Requirements
