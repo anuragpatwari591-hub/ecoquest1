@@ -9,3 +9,5 @@ venv/
 .DS_Store
 .pytest_results.xml
 docs/report/
+logs/
+backups/

@@ -37,6 +37,18 @@ HTML5 · CSS3 · vanilla JavaScript · Chart.js (CDN) · Python 3.11 · Flask ·
 ## Architecture
 Three tiers: Browser (HTML/CSS/JS) → Flask (routes + business logic) → MySQL. See [docs/architecture.md](docs/architecture.md).
 
+## Using EcoQuest on your PC (no terminal, no Claude Code needed)
+After the one-time setup below, everything works from the desktop:
+
+| Shortcut / file | What it does |
+|---|---|
+| **EcoQuest** (desktop, `EcoQuest.vbs`) | Starts MySQL and the app if they are not running, then opens http://127.0.0.1:5000 |
+| **EcoQuest - Stop** (desktop, `EcoQuest_Stop.vbs`) | Stops the app and the database cleanly |
+| `EcoQuest_Backup.vbs` | Saves a full database backup to the `backups` folder |
+| `EcoQuest_Create_Admin.bat` | Creates your own admin / teacher account |
+
+Needs Python 3.11, MySQL 8.4 (data folder `%USERPROFILE%\ecoquest-mysql-data`) and this project folder where it is now. The app runs on the Waitress server (`run_server.py`); logs are in `logs/server.log`.
+
 ## Installation & local run
 ```powershell
 pip install -r requirements.txt

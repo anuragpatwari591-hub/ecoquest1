@@ -2,5 +2,6 @@ Flask>=3.0,<4
 PyMySQL>=1.1
 cryptography>=42
 python-dotenv>=1.0
-gunicorn>=22
+gunicorn>=22; sys_platform != "win32"
+waitress>=3.0
 pytest>=8
