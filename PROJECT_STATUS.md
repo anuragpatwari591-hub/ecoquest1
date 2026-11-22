@@ -30,7 +30,7 @@ Password reset/email verification; certificates; CSV/PDF export; dark mode; PWA;
 * Flask development server used locally; gunicorn configured for deployment but untested on Windows (Linux-only server).
 
 ## Deployment status
-Local only. GitHub: local git repository with commits; **not pushed** (needs the owner's GitHub authentication). Railway: **not deployed**.
+Local only. GitHub: local git repository with commits; pushed to https://github.com/anuragpatwari591-hub/ecoquest1 (branch master). Railway: **not deployed**.
 
 ## Documentation status
 README, SRS + use cases, proposal/feasibility, architecture (component/deployment), DFD 0/1, ER, UML (class/sequence/activity), database,
