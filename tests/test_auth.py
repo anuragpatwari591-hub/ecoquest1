@@ -4,7 +4,7 @@ from conftest import login, one
 
 def test_register_student_success(client, db):                           # TC-01
     r = client.post("/register", data={"name": "New Kid", "email": "newkid@example.com", "password": "secret1"})
-    assert r.status_code == 302
+    assert r.status_code == 302 and "/student/dashboard" in r.location      # auto-logged-in
     row = one(db, "SELECT u.password_hash, r.role_name FROM users u JOIN roles r ON u.role_id=r.role_id "
                   "WHERE email='newkid@example.com'")
     assert row["role_name"] == "student"

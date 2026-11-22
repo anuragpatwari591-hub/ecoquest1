@@ -35,8 +35,10 @@ def register():
             db.rollback()
             flash("An account with this email already exists.", "danger")
             return render_template("register.html", form=request.form), 400
-        flash("Account created! Please log in.", "success")
-        return redirect(url_for("auth.login"))
+        user = authenticate(db, email, password)          # log the new student in straight away
+        login_user(user)
+        flash(f"Welcome to EcoQuest, {user['name']}! Your account is ready.", "success")
+        return redirect(home_for_role(user["role_name"]))
     return render_template("register.html", form={})
 
 
@@ -50,7 +52,7 @@ def login():
             login_user(user)
             flash(f"Welcome back, {user['name']}!", "success")
             return redirect(home_for_role(user["role_name"]))
-        flash("Invalid email or password.", "danger")
+        flash("Invalid email or password. If you have not registered yet, please create an account first.", "danger")
         return render_template("login.html", email=email), 401
     return render_template("login.html", email="")
 
