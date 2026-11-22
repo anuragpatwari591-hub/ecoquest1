@@ -31,7 +31,7 @@
 </div>
 {% endblock %}
 {% block scripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
 <script>
   var topics = {{ topics|map(attribute='name')|list|tojson }};
   var pct = {{ topics|map(attribute='percent')|list|tojson }};

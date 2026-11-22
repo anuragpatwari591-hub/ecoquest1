@@ -37,6 +37,16 @@ HTML5 · CSS3 · vanilla JavaScript · Chart.js (CDN) · Python 3.11 · Flask ·
 ## Architecture
 Three tiers: Browser (HTML/CSS/JS) → Flask (routes + business logic) → MySQL. See [docs/architecture.md](docs/architecture.md).
 
+## EcoQuest as a Windows application
+EcoQuest can run as a normal Windows program (own window, no browser, no address bar):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File build_exe.ps1     # builds dist\EcoQuest\EcoQuest.exe (PyInstaller + WebView2)
+powershell -ExecutionPolicy Bypass -File install_app.ps1   # installs to %LOCALAPPDATA%\Programs\EcoQuest + Desktop/Start Menu shortcuts
+```
+Open **EcoQuest** from the desktop or Start Menu. It starts the MySQL database and the app by itself, and stops them when you close the window.
+Remove it with `uninstall_app.ps1` (your data is kept). Charts work offline (Chart.js is bundled). It still needs MySQL 8.4 installed on the PC.
+
 ## Using EcoQuest on your PC (no terminal, no Claude Code needed)
 After the one-time setup below, everything works from the desktop:
 

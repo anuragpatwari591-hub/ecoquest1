@@ -23,7 +23,7 @@
 </div>
 {% endblock %}
 {% block scripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
 <script>
   var c = {{ charts|tojson }};
   drawChart("quizChart", "bar", c.quiz.labels, [{label: "Avg score %", data: c.quiz.values}], {scales: {y: {min: 0, max: 100}}});

@@ -11,3 +11,6 @@ venv/
 docs/report/
 logs/
 backups/
+build/
+dist/
+*.spec
