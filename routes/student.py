@@ -61,7 +61,7 @@ def topics():
     rows = fetch_all(db, "SELECT t.*, (SELECT COUNT(*) FROM lessons WHERE topic_id = t.topic_id) AS n_lessons, "
                          "(SELECT COUNT(*) FROM quizzes WHERE topic_id = t.topic_id) AS n_quizzes, "
                          "(SELECT COUNT(*) FROM challenges WHERE topic_id = t.topic_id AND is_active = 1) AS n_challenges "
-                         "FROM topics t ORDER BY t.topic_id")
+                         "FROM topics t ORDER BY t.category = 'Environment' DESC, t.category, t.topic_id")
     progress = {p["topic_id"]: p["percent"] for p in topic_progress_list(db, session["user_id"])}
     return render_template("student/topics.html", topics=rows, progress=progress)
 
@@ -87,7 +87,7 @@ def topic_detail(topic_id):
 @login_required("student")
 def lesson(lesson_id):
     db, uid = get_db(), session["user_id"]
-    row = fetch_one(db, "SELECT l.*, t.name AS topic_name, t.icon FROM lessons l "
+    row = fetch_one(db, "SELECT l.*, t.name AS topic_name, t.icon, t.category FROM lessons l "
                         "JOIN topics t ON l.topic_id = t.topic_id WHERE l.lesson_id = %s", (lesson_id,))
     if not row:
         abort(404)

@@ -3,7 +3,7 @@
 Environment: Windows 11, Python 3.11.9, MySQL 8.4.9 (local), Flask test client, database `ecoquest_test`.
 
 ## Automated tests
-Command: `python -m pytest -q` → **58 passed** (last run; ~16 s). Full per-case table: [docs/testing.md](docs/testing.md).
+Command: `python -m pytest -q` → **62 passed** (last run; ~16 s). Full per-case table: [docs/testing.md](docs/testing.md).
 
 | File | Tests (pytest items) |
 |---|---|

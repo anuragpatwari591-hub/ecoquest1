@@ -18,6 +18,7 @@ pip install -r requirements.txt
 copy .env.example .env      # then edit the values
 # 4. Create tables and demo data
 python init_db.py
+python create_admin.py       # create your own admin account
 # 5. Run
 python app.py               # http://127.0.0.1:5000
 ```
@@ -37,7 +38,7 @@ python app.py               # http://127.0.0.1:5000
 3. Add a **MySQL** database to the project; reference its variables in the web service (`MYSQLHOST`… are read automatically).
 4. Set `SECRET_KEY` (a long random string) and `SESSION_COOKIE_SECURE=1` in the web service variables.
 5. The included `Procfile` starts the app: `web: gunicorn app:app --bind 0.0.0.0:$PORT`.
-6. Once the service and database are up, run `python init_db.py` once (Railway shell/one-off command) to create tables and demo data.
+6. Once the service and database are up, run `python init_db.py` once and then `python create_admin.py` (Railway shell/one-off command) to create tables, study content and your admin account.
 7. Open the generated public domain and verify login with the demo accounts, then **change or remove the demo passwords** for any public deployment.
 
 ## Production notes

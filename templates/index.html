@@ -28,7 +28,7 @@
     <div class="grid grid-2" style="align-items:center">
       <div>
         <h2>Why EcoQuest?</h2>
-        <p>Environmental education is often taught in a traditional, theoretical way that does not engage students, so awareness about sustainability stays limited. EcoQuest is designed to improve engagement, awareness and participation by making environmental learning interactive and rewarding.</p>
+        <p>Environmental education is often taught in a traditional, theoretical way that does not engage students, so awareness about sustainability stays limited. EcoQuest is designed to improve engagement, awareness and participation by making learning interactive and rewarding — with environmental topics and a B.Tech study section (CSE/IT core and first-year subjects) sharing the same XP, levels and badges.</p>
       </div>
       <div class="grid grid-2">
         <div class="card stat"><div class="ico">📚</div><div><div class="val">{{ stats.lessons }}</div><div class="lab">Lessons</div></div></div>
@@ -38,9 +38,10 @@
       </div>
     </div>
 
-    <h2 id="topics" class="section">Explore environmental topics</h2>
+    <h2 id="topics" class="section">Explore topics and subjects</h2>
     <div class="grid grid-3">
       {% for t in topics %}
+      {% if loop.first or loop.previtem.category != t.category %}<h3 style="grid-column:1/-1;margin:.6rem 0 0">{{ t.category }}</h3>{% endif %}
       <div class="card hover"><div class="icon-lg" aria-hidden="true">{{ t.icon }}</div><h3>{{ t.name }}</h3><p class="muted small">{{ t.description }}</p></div>
       {% endfor %}
     </div>

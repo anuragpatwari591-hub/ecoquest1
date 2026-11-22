@@ -42,7 +42,7 @@ def create_app(testing=False):
     @app.route("/")
     def index():
         db = get_db()
-        topics = fetch_all(db, "SELECT * FROM topics ORDER BY topic_id")
+        topics = fetch_all(db, "SELECT * FROM topics t ORDER BY t.category = 'Environment' DESC, t.category, t.topic_id")
         stats = fetch_one(db, "SELECT (SELECT COUNT(*) FROM lessons) AS lessons, "
                               "(SELECT COUNT(*) FROM quizzes) AS quizzes, "
                               "(SELECT COUNT(*) FROM challenges WHERE is_active = 1) AS challenges, "

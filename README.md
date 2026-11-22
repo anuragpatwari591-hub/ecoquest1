@@ -21,7 +21,7 @@ participation by combining lessons, quizzes, real-life challenges and gamificati
 | Teacher | Dashboard with 4 charts, student list & detail, create quizzes/questions, create challenges |
 | Admin | Statistics, manage users, topics, lessons, badges (+ all teacher pages) |
 
-Demo content: 6 topics, 12 lessons, 6 quizzes (32 questions), 12 challenges, 7 badges.
+Built-in content: 6 environmental topics + 13 B.Tech study subjects (CSE/IT core and first-year common) = 51 lessons, 19 quizzes (110 questions), 20 challenges, 11 badges. The B.Tech lessons are original concise revision notes; admins can add more subjects, lessons and quizzes from the Admin pages.
 
 ## Technology stack
 HTML5 · CSS3 · vanilla JavaScript · Chart.js (CDN) · Python 3.11 · Flask · PyMySQL · MySQL 8 · pytest · Git
@@ -33,15 +33,17 @@ Three tiers: Browser (HTML/CSS/JS) → Flask (routes + business logic) → MySQL
 ```powershell
 pip install -r requirements.txt
 copy .env.example .env        # edit DB_* values and SECRET_KEY
-python init_db.py             # creates tables + demo data (use --reset to rebuild)
+python init_db.py             # creates/upgrades tables and loads study content (no fake users)
+python create_admin.py        # create YOUR admin account (asks for name, email, password)
 python app.py                 # open http://127.0.0.1:5000
+# optional, for demonstrations only: python init_db.py --demo  (adds fictional demo accounts + sample classmates)
 ```
 Database setup details: [docs/deployment.md](docs/deployment.md) · schema: [database/schema.sql](database/schema.sql).
 
 ## Environment variables
 `DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, SECRET_KEY, FLASK_DEBUG, SESSION_COOKIE_SECURE` — see `.env.example`. Never commit `.env`.
 
-## Demo accounts (fictional, local demo data)
+## Demo accounts (only if you ran `python init_db.py --demo`)
 | Role | Email | Password |
 |---|---|---|
 | Admin | admin@ecoquest.test | Admin@123 |
@@ -52,7 +54,7 @@ Database setup details: [docs/deployment.md](docs/deployment.md) · schema: [dat
 ```powershell
 python -m pytest -v
 ```
-Uses a separate `ecoquest_test` database. 58 automated tests (50 documented test cases) — see [docs/testing.md](docs/testing.md) and [TEST_RESULTS.md](TEST_RESULTS.md).
+Uses a separate `ecoquest_test` database. 62 automated tests (54 documented test cases) — see [docs/testing.md](docs/testing.md) and [TEST_RESULTS.md](TEST_RESULTS.md).
 
 ## Deployment
 Prepared for Railway (`Procfile`, environment-based config) but **not deployed**. See [docs/deployment.md](docs/deployment.md).

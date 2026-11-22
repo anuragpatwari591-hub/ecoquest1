@@ -21,7 +21,7 @@ DEMO = {
 
 @pytest.fixture(scope="session", autouse=True)
 def _database():
-    init_db.init(reset=True, with_sample_activity=False)
+    init_db.init(reset=True, demo_users=True)
 
 
 @pytest.fixture(autouse=True)

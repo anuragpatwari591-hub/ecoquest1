@@ -27,6 +27,7 @@
     <div class="card">
       <h2>Learning Progress</h2>
       {% for p in progress %}
+      {% if loop.first or loop.previtem.category != p.category %}<h3 style="margin:.8rem 0 .4rem">{{ p.category }}</h3>{% endif %}
       <div class="progress-row">
         <div class="top"><span>{{ p.icon }} {{ p.name }}</span><span>{{ p.percent }}%</span></div>
         <div class="bar" role="progressbar" aria-valuenow="{{ p.percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ p.name }} progress">

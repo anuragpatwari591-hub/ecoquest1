@@ -2,9 +2,10 @@
 {% block title %}Topics{% endblock %}
 {% block content %}
 <div class="container page">
-  <div class="page-head"><div><h1>Environmental Topics</h1><p class="muted">Choose a topic to read lessons, take quizzes and complete challenges.</p></div></div>
+  <div class="page-head"><div><h1>Subjects &amp; Topics</h1><p class="muted">Environmental topics and B.Tech study subjects: read lessons, take quizzes and complete challenges.</p></div></div>
   <div class="grid grid-auto">
     {% for t in topics %}
+    {% if loop.first or loop.previtem.category != t.category %}<h2 style="grid-column:1/-1;margin:.8rem 0 0">{{ t.category }}</h2>{% endif %}
     <a class="card hover" href="{{ url_for('student.topic_detail', topic_id=t.topic_id) }}" style="color:inherit;text-decoration:none">
       <div class="icon-lg" aria-hidden="true">{{ t.icon }}</div>
       <h3>{{ t.name }}</h3>

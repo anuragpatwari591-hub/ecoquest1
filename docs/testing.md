@@ -5,10 +5,10 @@ All tests are automated with **pytest** and run against a separate MySQL databas
 
 Run: `python -m pytest -v`
 
-Last executed: **2026-11-22** — pytest summary line: `58 passed in 16.39s`
+Last executed: **2026-11-22** — pytest summary line: `62 passed in 18.06s`
 
 Test case mapping: each `TC-xx` below is the comment on the corresponding test function in `tests/`.
-Parameterised tests count as one test case here. Total documented test cases: **50** — passed: **50**.
+Parameterised tests count as one test case here. Total documented test cases: **54** — passed: **54**.
 
 | Test Case ID | Description | Precondition | Steps | Expected Result | Actual Result | Status |
 |---|---|---|---|---|---|---|
@@ -62,6 +62,10 @@ Parameterised tests count as one test case here. Total documented test cases: **
 | TC-48 | Teacher pages render | Fresh seeded test database (ecoquest_test) | GET 7 teacher pages as teacher | All HTTP 200 | As expected | Passed |
 | TC-49 | Admin pages render | Fresh seeded test database (ecoquest_test) | GET admin pages and all teacher pages as admin | All HTTP 200 | As expected | Passed |
 | TC-50 | Custom 404 page | Fresh seeded test database (ecoquest_test) | GET /no-such-page | HTTP 404 with friendly message | As expected | Passed |
+| TC-51 | B.Tech content loaded | Fresh seeded test database (ecoquest_test) | Count B.Tech topics, lessons, questions | 13 subjects, 39 lessons, 78 questions; 6 environment topics | As expected | Passed |
+| TC-52 | B.Tech seeding repeatable | Fresh seeded test database (ecoquest_test) | Run seed_btech a second time | 0 subjects added; topic count unchanged | As expected | Passed |
+| TC-53 | Topics grouped by category | Fresh seeded test database (ecoquest_test) | GET /student/topics | Page shows both category headings and Python Programming | As expected | Passed |
+| TC-54 | B.Tech lessons use XP and badges | Fresh seeded test database (ecoquest_test) | Complete the 3 Python lessons | +30 XP and Python Pioneer badge | As expected | Passed |
 
 ## What is NOT covered by automated tests
 

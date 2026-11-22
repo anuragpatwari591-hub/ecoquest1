@@ -10,7 +10,7 @@
     <h2>Explanation</h2><p>{{ lesson.explanation }}</p>
     <h2>Key points</h2>
     <ul class="keypoints">{% for p in points %}<li>{{ p }}</li>{% endfor %}</ul>
-    <div class="eco-tip"><strong>🌿 Eco-tip:</strong> {{ lesson.eco_tip }}</div>
+    <div class="eco-tip"><strong>{% if lesson.category == 'Environment' %}🌿 Eco-tip:{% else %}💡 Study tip:{% endif %}</strong> {{ lesson.eco_tip }}</div>
   </div>
   <div class="card section center">
     {% if done %}

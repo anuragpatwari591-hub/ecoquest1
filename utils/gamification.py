@@ -152,7 +152,7 @@ def topic_progress(conn, user_id):
     """Per-topic progress % = (completed lessons + completed distinct challenges + quizzes taken)
     divided by (lessons + challenges + quizzes) available in that topic."""
     return fetch_all(conn, """
-        SELECT t.topic_id, t.name, t.icon,
+        SELECT t.topic_id, t.name, t.icon, t.category,
                (SELECT COUNT(*) FROM lessons l WHERE l.topic_id = t.topic_id) AS lessons_total,
                (SELECT COUNT(*) FROM user_progress up JOIN lessons l ON up.lesson_id = l.lesson_id
                  WHERE up.user_id = %s AND l.topic_id = t.topic_id) AS lessons_done,
