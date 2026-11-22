@@ -87,18 +87,40 @@ operate on them.
 
 ```mermaid
 classDiagram
-    class User { +user_id +name +email +password_hash +role +total_xp +streak +last_active +is_active }
-    class Topic { +topic_id +name +icon +description }
-    class Lesson { +lesson_id +title +difficulty +introduction +explanation +key_points +eco_tip }
-    class Quiz { +quiz_id +title +description }
-    class Question { +question_id +question_text +explanation }
-    class Option { +option_id +option_text +is_correct }
-    class QuizAttempt { +attempt_id +score +total_questions +xp_earned }
-    class Challenge { +challenge_id +title +difficulty +xp_reward +is_active }
-    class ChallengeCompletion { +completed_on +xp_earned }
-    class Badge { +badge_id +name +rule_type +rule_value }
-    class gamification_module { +calculate_level(xp) +level_info(xp) +calculate_quiz_xp(score,total) +next_streak(last,streak,today) +update_streak() +add_xp() +record_activity() +check_badges() +topic_progress_list() +leaderboard() +student_rank() }
-    class auth_module { +hash_password() +verify_password() +authenticate() +login_required(roles) +validate_registration() }
+    direction TB
+    class User {
+      +user_id
+      +name
+      +email
+      +password_hash
+      +role
+      +total_xp
+      +streak
+    }
+    class Topic { +topic_id +name }
+    class Lesson { +title +difficulty }
+    class Quiz { +quiz_id +title }
+    class Question { +question_text }
+    class Option { +option_text +is_correct }
+    class QuizAttempt { +score +xp_earned }
+    class Challenge { +title +xp_reward }
+    class ChallengeCompletion { +completed_on }
+    class Badge { +name +rule_type +rule_value }
+    class gamification_module {
+      +calculate_level()
+      +calculate_quiz_xp()
+      +next_streak()
+      +record_activity()
+      +check_badges()
+      +daily_quests()
+      +city_stage()
+      +leaderboard()
+    }
+    class auth_module {
+      +hash_password()
+      +authenticate()
+      +login_required()
+    }
     Topic "1" o-- "*" Lesson
     Topic "1" o-- "*" Quiz
     Topic "1" o-- "*" Challenge
@@ -162,18 +184,13 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    A([Student opens Challenges]) --> B[Select challenge]
+    A([Student opens Challenges]) --> B[Select a challenge]
     B --> C{Challenge active?}
-    C -- No --> X([404 not available])
+    C -- No --> X([Not available - 404])
     C -- Yes --> D{Already completed today?}
     D -- Yes --> E([Message: come back tomorrow])
-    D -- No --> F[Insert challenge_completions row]
-    F --> G[Add XP + activity log]
-    G --> H[Update streak]
-    H --> I{Streak multiple of 7?}
-    I -- Yes --> J[+100 bonus XP]
-    I -- No --> K[Check badge rules]
-    J --> K
-    K --> L[Commit]
-    L --> M([Show XP and any new badge])
+    D -- No --> F[Save completion, add XP, update streak]
+    F --> G[Check streak bonus, daily quests and badges]
+    G --> H[Commit to database]
+    H --> I([Show XP, level-up and new badges])
 ```

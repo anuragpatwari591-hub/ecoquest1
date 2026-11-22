@@ -31,7 +31,7 @@ flowchart TD
 ## Component diagram
 
 ```mermaid
-flowchart LR
+flowchart TB
     subgraph Browser
       Pages["Jinja2-rendered pages"]
       JS["main.js (quiz navigation, charts)"]

@@ -186,5 +186,6 @@ details.edit summary { cursor: pointer; color: var(--green-700); font-weight: 60
 .bar.pollution > span { background: linear-gradient(90deg, #f59e0b, #dc2626); }
 .quest { display: flex; justify-content: space-between; align-items: center; padding: .55rem .8rem; border-radius: 12px; background: #f9fafb; margin-bottom: .45rem; font-weight: 500; }
 .quest.done { background: var(--green-100); color: var(--green-900); }
-.quest-state { font-size: .8rem; font-weight: 700; color: var(--muted); } .quest.done .quest-state { color: var(--green-700); }
+.quest > span:first-child { margin-right: .6rem; }
+.quest-state { margin-left: auto; font-size: .8rem; font-weight: 700; color: var(--muted); } .quest.done .quest-state { color: var(--green-700); }
 @media (max-width: 720px) { .game-emoji { font-size: 4rem; } .hud strong { font-size: 1.2rem; } }
