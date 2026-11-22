@@ -42,7 +42,7 @@ def close_db(error=None):
 def fetch_all(conn, sql, args=None):
     with conn.cursor() as cur:
         cur.execute(sql, args or ())
-        return cur.fetchall()
+        return list(cur.fetchall())      # PyMySQL returns () when empty; always give callers a list
 
 
 def fetch_one(conn, sql, args=None):
