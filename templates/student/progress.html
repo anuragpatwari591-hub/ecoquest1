@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}My Progress{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><h1>📈 My Progress</h1></div>
+  <div class="grid grid-2">
+    <div class="card"><h2>Topic progress</h2>
+      {% if topics %}<div class="chart-box"><canvas id="topicChart" aria-label="Topic progress chart" role="img"></canvas></div>{% endif %}</div>
+    <div class="card"><h2>Quiz performance</h2>
+      {% if attempts %}<div class="chart-box"><canvas id="quizChart" aria-label="Quiz score history chart" role="img"></canvas></div>
+      {% else %}<p class="empty">Take a quiz to see your score history here.</p>{% endif %}</div>
+  </div>
+  <div class="card section"><h2>XP earned per active day</h2>
+    {% if daily_xp %}<div class="chart-box" style="height:240px"><canvas id="xpChart" aria-label="XP per day chart" role="img"></canvas></div>
+    {% else %}<p class="empty">No XP yet. Complete a lesson to get started.</p>{% endif %}</div>
+
+  <h2 class="section">Badges</h2>
+  <div class="grid grid-auto" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">
+    {% for b in badges %}
+    <div class="badge-tile {% if not b.earned_at %}locked{% endif %}"><div class="em" aria-hidden="true">{{ b.icon }}</div>
+      <strong>{{ b.name }}</strong><div class="muted small">{{ b.description }}</div>
+      <div class="small" style="margin-top:.3rem">{% if b.earned_at %}✔ Earned {{ b.earned_at.strftime('%d %b %Y') }}{% else %}🔒 Locked{% endif %}</div></div>
+    {% endfor %}
+  </div>
+
+  <h2 class="section">Activity history</h2>
+  <div class="table-wrap"><table><thead><tr><th>When</th><th>Activity</th><th>XP</th></tr></thead><tbody>
+    {% for h in history %}<tr><td>{{ h.created_at.strftime('%d %b %Y, %H:%M') }}</td><td>{{ h.description }}</td><td>{% if h.xp_change %}+{{ h.xp_change }}{% else %}—{% endif %}</td></tr>
+    {% else %}<tr><td colspan="3" class="empty">No activity yet.</td></tr>{% endfor %}
+  </tbody></table></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+  var topics = {{ topics|map(attribute='name')|list|tojson }};
+  var pct = {{ topics|map(attribute='percent')|list|tojson }};
+  drawChart("topicChart", "bar", topics, [{label: "Progress %", data: pct}], {indexAxis: "y", scales: {x: {min: 0, max: 100}}});
+  var attempts = {{ attempts|map(attribute='title')|list|tojson }};
+  var scores = {{ attempts|map(attribute='score')|list|tojson }};
+  var totals = {{ attempts|map(attribute='total_questions')|list|tojson }};
+  drawChart("quizChart", "line", attempts.map(function (t, i) { return (i + 1) + ". " + t; }),
+            [{label: "Score %", data: scores.map(function (s, i) { return Math.round(s * 100 / totals[i]); }), borderColor: "#16a34a", backgroundColor: "#16a34a"}],
+            {scales: {y: {min: 0, max: 100}}});
+  var xp = {{ daily_xp|tojson }};
+  drawChart("xpChart", "bar", xp.map(function (d) { return d.day; }), [{label: "XP", data: xp.map(function (d) { return d.xp; })}]);
+</script>
+{% endblock %}

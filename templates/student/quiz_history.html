@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Quiz History{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><h1>Quiz attempt history</h1><a class="btn btn-outline" href="{{ url_for('quiz.quiz_list') }}">All quizzes</a></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Date</th><th>Quiz</th><th>Score</th><th>Accuracy</th><th>XP</th><th></th></tr></thead>
+    <tbody>
+    {% for a in attempts %}<tr><td>{{ a.attempted_at.strftime('%d %b %Y, %H:%M') }}</td><td>{{ a.title }}</td><td>{{ a.score }}/{{ a.total_questions }}</td>
+      <td>{{ a.accuracy }}%</td><td>+{{ a.xp_earned }}</td><td><a href="{{ url_for('quiz.result', attempt_id=a.attempt_id) }}">Review</a></td></tr>
+    {% else %}<tr><td colspan="6" class="empty">You have not attempted any quiz yet.</td></tr>{% endfor %}
+    </tbody></table></div>
+</div>
+{% endblock %}

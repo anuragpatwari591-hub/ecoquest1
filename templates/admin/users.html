@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><h1>Users</h1>
+    <div class="row"><a class="btn btn-sm {% if not role_filter %}{% else %}btn-outline{% endif %}" href="{{ url_for('admin.users') }}">All</a>
+      {% for r in ['student', 'teacher', 'admin'] %}<a class="btn btn-sm {% if role_filter != r %}btn-outline{% endif %}" href="{{ url_for('admin.users', role=r) }}">{{ r.title() }}s</a>{% endfor %}</div></div>
+  <div class="card"><h2>Add a user</h2>
+    <form method="post" action="{{ url_for('admin.users') }}" class="grid grid-3">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="field"><label for="name">Name</label><input type="text" id="name" name="name" required></div>
+      <div class="field"><label for="email">Email</label><input type="email" id="email" name="email" required></div>
+      <div class="field"><label for="password">Password</label><input type="password" id="password" name="password" required minlength="6" autocomplete="new-password"></div>
+      <div class="field"><label for="role">Role</label><select id="role" name="role"><option value="student">Student</option><option value="teacher">Teacher</option><option value="admin">Admin</option></select></div>
+      <div class="field"><label for="institution">Institution</label><input type="text" id="institution" name="institution"></div>
+      <div class="field"><label for="class_name">Class</label><input type="text" id="class_name" name="class_name"></div>
+      <div><button class="btn" type="submit">Create user</button></div>
+    </form></div>
+  <div class="table-wrap section"><table>
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Class</th><th>XP</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+    {% for u in users %}<tr><td>{{ u.name }}</td><td>{{ u.email }}</td><td><span class="chip {% if u.role_name == 'admin' %}red{% elif u.role_name == 'teacher' %}blue{% endif %}">{{ u.role_name }}</span></td>
+      <td>{{ u.class_name or '—' }}</td><td>{{ u.total_xp }}</td><td>{% if u.is_active %}Active{% else %}<span class="chip red">Disabled</span>{% endif %}</td>
+      <td class="row">
+        <form method="post" action="{{ url_for('admin.user_toggle', user_id=u.user_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button class="btn btn-outline btn-sm" type="submit">{% if u.is_active %}Disable{% else %}Enable{% endif %}</button></form>
+        <form method="post" action="{{ url_for('admin.user_delete', user_id=u.user_id) }}" data-confirm="Delete {{ u.name }} and all their progress?">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-danger btn-sm" type="submit">Delete</button></form></td></tr>
+    {% endfor %}</tbody></table></div>
+</div>
+{% endblock %}

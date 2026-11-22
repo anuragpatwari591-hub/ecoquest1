@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head">
+    <div><h1>{{ greeting }}, {{ user.name.split(' ')[0] }} 🌱</h1>
+      <p class="muted">Keep learning and acting — every step counts.</p></div>
+    <span class="streak" title="Consecutive days with activity">🔥 {{ user.streak }} Day Streak</span>
+  </div>
+
+  <div class="grid grid-4">
+    <div class="card stat"><div class="ico">⭐</div><div><div class="val">{{ user.total_xp }}</div><div class="lab">Total XP</div></div></div>
+    <div class="card stat"><div class="ico">🎖️</div><div><div class="val">Level {{ info.level }}</div><div class="lab">{{ info.xp_to_next }} XP to next level</div></div></div>
+    <div class="card stat"><div class="ico">🏅</div><div><div class="val">{{ badge_count }}</div><div class="lab">Badges</div></div></div>
+    <div class="card stat"><div class="ico">🏆</div><div><div class="val">#{{ rank }}</div><div class="lab"><a href="{{ url_for('student.leaderboard_page') }}">Leaderboard position</a></div></div></div>
+  </div>
+
+  <div class="card section">
+    <div class="progress-row" style="margin:0">
+      <div class="top"><span>Level {{ info.level }} → Level {{ info.level + 1 }}</span><span>{{ info.xp_into_level }} / 100 XP</span></div>
+      <div class="bar lg" role="progressbar" aria-valuenow="{{ info.percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="Level progress">
+        <span data-width="{{ info.percent }}" style="width:0"></span></div>
+    </div>
+  </div>
+
+  <div class="grid grid-2 section">
+    <div class="card">
+      <h2>Learning Progress</h2>
+      {% for p in progress %}
+      <div class="progress-row">
+        <div class="top"><span>{{ p.icon }} {{ p.name }}</span><span>{{ p.percent }}%</span></div>
+        <div class="bar" role="progressbar" aria-valuenow="{{ p.percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ p.name }} progress">
+          <span data-width="{{ p.percent }}" style="width:0"></span></div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="grid" style="align-content:start">
+      <div class="card challenge-card">
+        <h2>Today's Challenge</h2>
+        {% if todays %}
+          <p><span class="chip">{{ todays.topic_name }}</span> <span class="chip amber">{{ todays.difficulty }}</span></p>
+          <h3>{{ todays.title }}</h3>
+          <p class="muted small">{{ todays.description }}</p>
+          <div class="row between">
+            <span class="xp">+{{ todays.xp_reward }} XP</span>
+            {% if todays.done_today %}<span class="chip">✔ Done today</span>
+            {% else %}
+            <form method="post" action="{{ url_for('challenge.complete', challenge_id=todays.challenge_id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button class="btn btn-sm" type="submit">Mark complete</button></form>
+            {% endif %}
+          </div>
+        {% else %}<p class="muted">No challenges available right now.</p>{% endif %}
+      </div>
+      <div class="card">
+        <h2>Recent Activity</h2>
+        {% for a in activity %}
+          <div class="row between small" style="padding:.35rem 0;border-bottom:1px solid #f0f2f0">
+            <span>{{ a.description }}</span><strong>{% if a.xp_change %}+{{ a.xp_change }} XP{% else %}🏅{% endif %}</strong></div>
+        {% else %}<p class="empty">No activity yet. Complete your first lesson!</p>{% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-2 section">
+    <div class="card">
+      <div class="row between"><h2>Available Lessons</h2><a href="{{ url_for('student.topics') }}" class="small">All topics →</a></div>
+      {% for l in next_lessons %}
+        <a class="row between" href="{{ url_for('student.lesson', lesson_id=l.lesson_id) }}" style="padding:.5rem 0;border-bottom:1px solid #f0f2f0">
+          <span>📖 {{ l.title }}<br><span class="muted small">{{ l.topic_name }}</span></span><span class="chip">{{ l.difficulty }}</span></a>
+      {% else %}<p class="empty">🎉 You completed every lesson!</p>{% endfor %}
+    </div>
+    <div class="card">
+      <div class="row between"><h2>Available Quizzes</h2><a href="{{ url_for('quiz.quiz_list') }}" class="small">All quizzes →</a></div>
+      {% for q in next_quizzes %}
+        <a class="row between" href="{{ url_for('quiz.quiz_intro', quiz_id=q.quiz_id) }}" style="padding:.5rem 0;border-bottom:1px solid #f0f2f0">
+          <span>🧠 {{ q.title }}<br><span class="muted small">{{ q.topic_name }}</span></span><span class="chip blue">{{ q.n_questions }} questions</span></a>
+      {% else %}<p class="empty">You have attempted every quiz. Try one again from the quiz list!</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

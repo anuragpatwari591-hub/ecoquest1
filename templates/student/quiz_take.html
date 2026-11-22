@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ quiz.title }}{% endblock %}
+{% block content %}
+<div class="container page" style="max-width:780px">
+  <h1>{{ quiz.title }}</h1>
+  <div class="qnav" aria-label="Question navigation">
+    {% for q in questions %}<button type="button" aria-label="Go to question {{ loop.index }}">{{ loop.index }}</button>{% endfor %}
+  </div>
+  <form id="quizForm" method="post" action="{{ url_for('quiz.submit', quiz_id=quiz.quiz_id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    {% for q in questions %}
+    <fieldset class="quiz-q card" style="border:0">
+      <legend class="muted small">Question {{ loop.index }}/{{ questions|length }}</legend>
+      <h2>{{ q.question_text }}</h2>
+      {% for o in q.options %}
+      <label class="option"><input type="radio" name="q_{{ q.question_id }}" value="{{ o.option_id }}"> {{ o.option_text }}</label>
+      {% endfor %}
+    </fieldset>
+    {% endfor %}
+    <div class="row between section">
+      <button class="btn btn-outline" type="button" id="prevBtn">← Previous</button>
+      <span id="qCounter" class="muted"></span>
+      <button class="btn" type="button" id="nextBtn">Next →</button>
+      <button class="btn" type="submit" id="submitBtn" style="display:none">Submit quiz</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Students{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><h1>Students</h1>
+    <form method="get" class="row"><label for="class_name" class="muted" style="margin:0">Class</label>
+      <select id="class_name" name="class_name" style="width:auto"><option value="">All classes</option>
+        {% for c in classes %}<option value="{{ c }}" {% if c == class_name %}selected{% endif %}>{{ c }}</option>{% endfor %}</select>
+      <button class="btn btn-sm" type="submit">Filter</button></form></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Student</th><th>Class</th><th>Level</th><th>XP</th><th>Lessons</th><th>Quizzes</th><th>Avg score</th><th>Streak</th><th></th></tr></thead>
+    <tbody>
+    {% for s in students %}<tr><td>{{ s.name }}<br><span class="muted small">{{ s.email }}</span></td><td>{{ s.class_name or '—' }}</td>
+      <td>{{ s.level }}</td><td>{{ s.total_xp }}</td><td>{{ s.lessons_done }}</td><td>{{ s.attempts }}</td><td>{{ s.avg_pct|int }}%</td><td>🔥 {{ s.streak }}</td>
+      <td><a href="{{ url_for('teacher.student_detail', user_id=s.user_id) }}">View</a></td></tr>
+    {% else %}<tr><td colspan="9" class="empty">No students found.</td></tr>{% endfor %}
+    </tbody></table></div>
+</div>
+{% endblock %}

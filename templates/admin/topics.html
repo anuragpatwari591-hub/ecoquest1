@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Manage Topics{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><h1>Topics</h1></div>
+  <div class="card"><h2>Add a topic</h2>
+    <form method="post" action="{{ url_for('admin.topics') }}" class="grid grid-3">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="field"><label for="name">Name</label><input type="text" id="name" name="name" required maxlength="80"></div>
+      <div class="field"><label for="icon">Icon (emoji)</label><input type="text" id="icon" name="icon" maxlength="8" value="🌍"></div>
+      <div class="field"><label for="description">Description</label><input type="text" id="description" name="description" required></div>
+      <div><button class="btn" type="submit">Add topic</button></div>
+    </form></div>
+  <div class="grid section">
+    {% for t in topics %}
+    <div class="card"><div class="row between"><div><strong>{{ t.icon }} {{ t.name }}</strong><br><span class="muted small">{{ t.description }} · {{ t.n_lessons }} lessons</span></div>
+      <form method="post" action="{{ url_for('admin.topic_delete', topic_id=t.topic_id) }}" data-confirm="Delete this topic and ALL its lessons, quizzes and challenges?">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-danger btn-sm" type="submit">Delete</button></form></div>
+      <details class="edit" style="margin-top:.6rem"><summary>Edit</summary>
+        <form method="post" action="{{ url_for('admin.topics') }}" class="grid grid-3" style="margin-top:.6rem">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="topic_id" value="{{ t.topic_id }}">
+          <div><label for="n{{ t.topic_id }}">Name</label><input type="text" id="n{{ t.topic_id }}" name="name" value="{{ t.name }}" required></div>
+          <div><label for="i{{ t.topic_id }}">Icon</label><input type="text" id="i{{ t.topic_id }}" name="icon" value="{{ t.icon }}"></div>
+          <div><label for="d{{ t.topic_id }}">Description</label><input type="text" id="d{{ t.topic_id }}" name="description" value="{{ t.description }}" required></div>
+          <div><button class="btn btn-sm" type="submit">Save</button></div></form></details></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

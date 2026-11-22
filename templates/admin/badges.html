@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Manage Badges{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><h1>Badges</h1></div>
+  <div class="card"><h2>Create a badge</h2>
+    <form method="post" action="{{ url_for('admin.badges') }}" class="grid grid-3">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="field"><label for="name">Name</label><input type="text" id="name" name="name" required maxlength="60"></div>
+      <div class="field"><label for="icon">Icon (emoji)</label><input type="text" id="icon" name="icon" maxlength="8" value="🏅"></div>
+      <div class="field"><label for="description">Description</label><input type="text" id="description" name="description" required maxlength="255"></div>
+      <div class="field"><label for="rule_type">Rule</label><select id="rule_type" name="rule_type">{% for k, v in rules.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="rule_value">Required value</label><input type="number" id="rule_value" name="rule_value" min="1" value="1" required></div>
+      <div class="field"><label for="topic_id">Topic (for topic rules)</label><select id="topic_id" name="topic_id"><option value="">—</option>{% for t in topics %}<option value="{{ t.topic_id }}">{{ t.name }}</option>{% endfor %}</select></div>
+      <div><button class="btn" type="submit">Create badge</button></div>
+    </form></div>
+  <div class="table-wrap section"><table>
+    <thead><tr><th>Badge</th><th>Description</th><th>Rule</th><th>Earned by</th><th></th></tr></thead><tbody>
+    {% for b in badges %}<tr><td>{{ b.icon }} <strong>{{ b.name }}</strong></td><td>{{ b.description }}</td>
+      <td class="small">{{ rules.get(b.rule_type, b.rule_type) }} ≥ {{ b.rule_value }}{% if b.topic_name %} ({{ b.topic_name }}){% endif %}</td><td>{{ b.n_earned }}</td>
+      <td><form method="post" action="{{ url_for('admin.badge_delete', badge_id=b.badge_id) }}" data-confirm="Delete this badge?">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-danger btn-sm" type="submit">Delete</button></form></td></tr>
+    {% endfor %}</tbody></table></div>
+</div>
+{% endblock %}

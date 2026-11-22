@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Questions - {{ quiz.title }}{% endblock %}
+{% block content %}
+<div class="container page">
+  <p class="small"><a href="{{ url_for('teacher.quizzes') }}">← All quizzes</a></p>
+  <h1>{{ quiz.title }}</h1><p class="muted">{{ questions|length }} question(s)</p>
+  <div class="card"><h2>Add a question</h2>
+    <form method="post" action="{{ url_for('teacher.quiz_questions', quiz_id=quiz.quiz_id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="field"><label for="question_text">Question</label><textarea id="question_text" name="question_text" required maxlength="500" style="min-height:70px"></textarea></div>
+      <div class="grid grid-2">
+        {% for i in range(1, 5) %}<div class="field"><label for="option{{ i }}">Option {{ i }}</label><input type="text" id="option{{ i }}" name="option{{ i }}" required maxlength="300"></div>{% endfor %}
+      </div>
+      <fieldset class="field" style="border:0;padding:0"><legend style="font-weight:600;font-size:.9rem">Correct option</legend>
+        {% for i in range(1, 5) %}<label style="display:inline-flex;gap:.3rem;margin-right:1rem;font-weight:500"><input type="radio" name="correct" value="{{ i }}" required> {{ i }}</label>{% endfor %}</fieldset>
+      <div class="field"><label for="explanation">Explanation (optional, shown in answer review)</label><input type="text" id="explanation" name="explanation" maxlength="500"></div>
+      <button class="btn" type="submit">Add question</button>
+    </form></div>
+  <h2 class="section">Existing questions</h2>
+  {% for q in questions %}
+  <div class="card" style="margin-bottom:.8rem"><div class="row between"><strong>{{ loop.index }}. {{ q.question_text }}</strong>
+    <form method="post" action="{{ url_for('teacher.question_delete', question_id=q.question_id) }}" data-confirm="Delete this question?">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-danger btn-sm" type="submit">Delete</button></form></div>
+    <ul>{% for o in q.options %}<li>{{ o.option_text }} {% if o.is_correct %}<span class="chip">✔ correct</span>{% endif %}</li>{% endfor %}</ul></div>
+  {% else %}<p class="empty">No questions yet.</p>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Manage Lessons{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><h1>Lessons</h1><a class="btn" href="{{ url_for('admin.lesson_form') }}">+ New lesson</a></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Topic</th><th>Title</th><th>Difficulty</th><th>Actions</th></tr></thead><tbody>
+    {% for l in lessons %}<tr><td>{{ l.topic_name }}</td><td>{{ l.title }}</td><td>{{ l.difficulty }}</td>
+      <td class="row"><a class="btn btn-outline btn-sm" href="{{ url_for('admin.lesson_form', lesson_id=l.lesson_id) }}">Edit</a>
+        <form method="post" action="{{ url_for('admin.lesson_delete', lesson_id=l.lesson_id) }}" data-confirm="Delete this lesson?">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-danger btn-sm" type="submit">Delete</button></form></td></tr>
+    {% endfor %}</tbody></table></div>
+</div>
+{% endblock %}

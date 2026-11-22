@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="auth-wrap card">
+    <h1>Join EcoQuest 🌍</h1>
+    <p class="muted">Create a student account. Teachers and admins are added by an administrator.</p>
+    <form method="post" action="{{ url_for('auth.register') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="field"><label for="name">Full name</label>
+        <input type="text" id="name" name="name" value="{{ form.get('name', '') }}" required minlength="2" maxlength="100"></div>
+      <div class="field"><label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ form.get('email', '') }}" required></div>
+      <div class="field"><label for="password">Password (min 6 characters)</label>
+        <input type="password" id="password" name="password" required minlength="6" autocomplete="new-password"></div>
+      <div class="field"><label for="institution">School / College (optional)</label>
+        <input type="text" id="institution" name="institution" value="{{ form.get('institution', '') }}" maxlength="120"></div>
+      <div class="field"><label for="class_name">Class (optional)</label>
+        <input type="text" id="class_name" name="class_name" value="{{ form.get('class_name', '') }}" maxlength="50" placeholder="e.g. Class 10-A"></div>
+      <button class="btn" type="submit" style="width:100%">Create account</button>
+    </form>
+    <p class="center small">Already registered? <a href="{{ url_for('auth.login') }}">Login</a></p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Manage Quizzes{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><h1>Quizzes</h1></div>
+  <div class="card"><h2>Create a new quiz</h2>
+    <form method="post" action="{{ url_for('teacher.quiz_create') }}" class="grid grid-2">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="field"><label for="title">Title</label><input type="text" id="title" name="title" required maxlength="150"></div>
+      <div class="field"><label for="topic_id">Topic</label><select id="topic_id" name="topic_id" required>
+        {% for t in topics %}<option value="{{ t.topic_id }}">{{ t.name }}</option>{% endfor %}</select></div>
+      <div class="field" style="grid-column:1/-1"><label for="description">Description</label><textarea id="description" name="description" required style="min-height:70px"></textarea></div>
+      <div><button class="btn" type="submit">Create quiz &amp; add questions</button></div>
+    </form></div>
+  <div class="table-wrap section"><table>
+    <thead><tr><th>Quiz</th><th>Topic</th><th>Questions</th><th>Attempts</th><th>Actions</th></tr></thead><tbody>
+    {% for q in quizzes %}<tr><td>{{ q.title }}</td><td>{{ q.topic_name }}</td><td>{{ q.n_questions }}</td><td>{{ q.n_attempts }}</td>
+      <td class="row"><a class="btn btn-outline btn-sm" href="{{ url_for('teacher.quiz_questions', quiz_id=q.quiz_id) }}">Questions</a>
+        <form method="post" action="{{ url_for('teacher.quiz_delete', quiz_id=q.quiz_id) }}" data-confirm="Delete this quiz and all its attempts?">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-danger btn-sm" type="submit">Delete</button></form></td></tr>
+    {% else %}<tr><td colspan="5" class="empty">No quizzes yet.</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endblock %}

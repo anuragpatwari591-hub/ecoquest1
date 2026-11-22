@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="container page" style="max-width:640px">
+  <h1>My Profile</h1>
+  <div class="card">
+    {% if session.get('role') == 'student' %}<p><span class="chip">⭐ {{ user.total_xp }} XP</span> <span class="chip blue">Level {{ info.level }}</span> <span class="streak">🔥 {{ user.streak }} day streak</span></p>{% endif %}
+    <form method="post" action="{{ url_for('student.profile') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="field"><label for="email">Email (cannot be changed)</label><input type="email" id="email" value="{{ user.email }}" disabled></div>
+      <div class="field"><label for="name">Name</label><input type="text" id="name" name="name" value="{{ user.name }}" required minlength="2" maxlength="100"></div>
+      <div class="field"><label for="institution">Institution</label><input type="text" id="institution" name="institution" value="{{ user.institution or '' }}" maxlength="120"></div>
+      <div class="field"><label for="class_name">Class</label><input type="text" id="class_name" name="class_name" value="{{ user.class_name or '' }}" maxlength="50"></div>
+      <button class="btn" type="submit">Save changes</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

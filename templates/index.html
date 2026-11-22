@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Learn. Play. Act. Make an Impact.{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <span class="chip">🌍 Gamified environmental education</span>
+      <h1>Learn. Play. Act.<br><span>Make an Impact.</span></h1>
+      <p class="lead">EcoQuest turns environmental education into a game. Read short lessons, take quizzes, complete real-life eco challenges, earn XP and badges, and climb the leaderboard.</p>
+      <div class="row" style="margin-top:1.4rem">
+        <a class="btn btn-lg" href="{{ url_for('auth.register') }}">Start Learning</a>
+        <a class="btn btn-outline btn-lg" href="{{ url_for('auth.login') }}">Login</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-label="Example of the student dashboard">
+      <div class="row between"><strong>Today's Challenge</strong><span class="chip amber">+30 XP</span></div>
+      <p style="margin:.4rem 0 1rem">♻️ Plastic-Free Day — avoid single-use plastic for one day.</p>
+      <div class="progress-row"><div class="top"><span>Level 3</span><span>60 / 100 XP</span></div>
+        <div class="bar lg"><span data-width="60" style="width:0"></span></div></div>
+      <div class="row"><span class="chip">🌱 Green Beginner</span><span class="chip blue">📘 Eco Learner</span><span class="streak">🔥 5 Day Streak</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" style="min-height:0">
+  <div class="container">
+    <div class="grid grid-2" style="align-items:center">
+      <div>
+        <h2>Why EcoQuest?</h2>
+        <p>Environmental education is often taught in a traditional, theoretical way that does not engage students, so awareness about sustainability stays limited. EcoQuest is designed to improve engagement, awareness and participation by making environmental learning interactive and rewarding.</p>
+      </div>
+      <div class="grid grid-2">
+        <div class="card stat"><div class="ico">📚</div><div><div class="val">{{ stats.lessons }}</div><div class="lab">Lessons</div></div></div>
+        <div class="card stat"><div class="ico">❓</div><div><div class="val">{{ stats.quizzes }}</div><div class="lab">Quizzes</div></div></div>
+        <div class="card stat"><div class="ico">🌿</div><div><div class="val">{{ stats.challenges }}</div><div class="lab">Challenges</div></div></div>
+        <div class="card stat"><div class="ico">🏅</div><div><div class="val">{{ stats.badges }}</div><div class="lab">Badges</div></div></div>
+      </div>
+    </div>
+
+    <h2 id="topics" class="section">Explore environmental topics</h2>
+    <div class="grid grid-3">
+      {% for t in topics %}
+      <div class="card hover"><div class="icon-lg" aria-hidden="true">{{ t.icon }}</div><h3>{{ t.name }}</h3><p class="muted small">{{ t.description }}</p></div>
+      {% endfor %}
+    </div>
+
+    <h2 id="how" class="section center">How it works</h2>
+    <div class="steps">
+      <div class="card step"><div class="num">1</div><h3>Learn</h3><p class="muted small">Read bite-sized lessons on six environmental topics.</p></div>
+      <div class="card step"><div class="num">2</div><h3>Play</h3><p class="muted small">Test yourself with multiple-choice quizzes.</p></div>
+      <div class="card step"><div class="num">3</div><h3>Complete</h3><p class="muted small">Do real eco challenges in daily life.</p></div>
+      <div class="card step"><div class="num">4</div><h3>Earn</h3><p class="muted small">Collect XP, level up and unlock badges.</p></div>
+    </div>
+
+    <h2 id="features" class="section center">Features</h2>
+    <div class="grid grid-4">
+      <div class="card"><h3>📖 Interactive learning</h3><p class="muted small">Lessons with key points and an eco-tip.</p></div>
+      <div class="card"><h3>🧠 Quizzes</h3><p class="muted small">Instant scores with answer review.</p></div>
+      <div class="card"><h3>🌱 Challenges</h3><p class="muted small">Simple daily actions that help the planet.</p></div>
+      <div class="card"><h3>⭐ XP &amp; levels</h3><p class="muted small">Earn XP for every activity and level up.</p></div>
+      <div class="card"><h3>🏅 Badges</h3><p class="muted small">Unlocked automatically as you progress.</p></div>
+      <div class="card"><h3>🏆 Leaderboards</h3><p class="muted small">Compare XP by class or institution.</p></div>
+      <div class="card"><h3>📈 Progress tracking</h3><p class="muted small">Topic-wise progress and activity history.</p></div>
+      <div class="card"><h3>👩‍🏫 Teacher tools</h3><p class="muted small">Create quizzes and challenges, view analytics.</p></div>
+    </div>
+
+    <div class="cta section">
+      <h2>Ready to begin your eco journey?</h2>
+      <p>Create a free student account and complete your first lesson today.</p>
+      <div class="row" style="justify-content:center"><a class="btn btn-lg" href="{{ url_for('auth.register') }}">Register</a>
+        <a class="btn btn-outline btn-lg" href="{{ url_for('auth.login') }}">Login</a></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

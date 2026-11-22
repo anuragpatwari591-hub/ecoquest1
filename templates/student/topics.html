@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Topics{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><div><h1>Environmental Topics</h1><p class="muted">Choose a topic to read lessons, take quizzes and complete challenges.</p></div></div>
+  <div class="grid grid-auto">
+    {% for t in topics %}
+    <a class="card hover" href="{{ url_for('student.topic_detail', topic_id=t.topic_id) }}" style="color:inherit;text-decoration:none">
+      <div class="icon-lg" aria-hidden="true">{{ t.icon }}</div>
+      <h3>{{ t.name }}</h3>
+      <p class="muted small">{{ t.description }}</p>
+      <p class="small">📖 {{ t.n_lessons }} lessons · 🧠 {{ t.n_quizzes }} quizzes · 🌿 {{ t.n_challenges }} challenges</p>
+      <div class="bar" role="progressbar" aria-valuenow="{{ progress[t.topic_id] }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ t.name }} progress">
+        <span data-width="{{ progress[t.topic_id] }}" style="width:0"></span></div>
+      <p class="small muted" style="margin:.3rem 0 0">{{ progress[t.topic_id] }}% complete</p>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

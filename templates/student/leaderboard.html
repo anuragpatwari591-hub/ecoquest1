@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><div><h1>🏆 Leaderboard</h1><p class="muted">Students ranked by total XP.</p></div></div>
+  <form method="get" class="card row" style="margin-bottom:1rem">
+    <div style="flex:1;min-width:180px"><label for="institution">Institution</label>
+      <select id="institution" name="institution"><option value="">All institutions</option>
+        {% for i in institutions %}<option value="{{ i }}" {% if i == institution %}selected{% endif %}>{{ i }}</option>{% endfor %}</select></div>
+    <div style="flex:1;min-width:180px"><label for="class_name">Class</label>
+      <select id="class_name" name="class_name"><option value="">All classes</option>
+        {% for c in classes %}<option value="{{ c }}" {% if c == class_name %}selected{% endif %}>{{ c }}</option>{% endfor %}</select></div>
+    <div style="align-self:flex-end"><button class="btn" type="submit">Filter</button></div>
+  </form>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Rank</th><th>Student</th><th>Institution / Class</th><th>Level</th><th>XP</th><th>Badges</th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr class="{% if r.user_id == session.get('user_id') %}me{% endif %}">
+        <td class="rank">{% if r.rank == 1 %}🥇{% elif r.rank == 2 %}🥈{% elif r.rank == 3 %}🥉{% else %}#{{ r.rank }}{% endif %}</td>
+        <td>{{ r.name }}{% if r.user_id == session.get('user_id') %} (you){% endif %}</td>
+        <td class="muted small">{{ r.institution or '—' }} · {{ r.class_name or '—' }}</td>
+        <td>{{ r.level }}</td><td><strong>{{ r.total_xp }}</strong></td><td>🏅 {{ r.badge_count }}</td></tr>
+    {% else %}<tr><td colspan="6" class="empty">No students found.</td></tr>{% endfor %}
+    </tbody></table></div>
+</div>
+{% endblock %}

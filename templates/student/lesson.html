@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ lesson.title }}{% endblock %}
+{% block content %}
+<div class="container page" style="max-width:820px">
+  <p class="small"><a href="{{ url_for('student.topic_detail', topic_id=lesson.topic_id) }}">← {{ lesson.icon }} {{ lesson.topic_name }}</a></p>
+  <div class="row"><span class="chip">{{ lesson.topic_name }}</span><span class="chip amber">{{ lesson.difficulty }}</span></div>
+  <h1 style="margin-top:.6rem">{{ lesson.title }}</h1>
+  <div class="card lesson-body">
+    <h2>Introduction</h2><p>{{ lesson.introduction }}</p>
+    <h2>Explanation</h2><p>{{ lesson.explanation }}</p>
+    <h2>Key points</h2>
+    <ul class="keypoints">{% for p in points %}<li>{{ p }}</li>{% endfor %}</ul>
+    <div class="eco-tip"><strong>🌿 Eco-tip:</strong> {{ lesson.eco_tip }}</div>
+  </div>
+  <div class="card section center">
+    {% if done %}
+      <p><span class="chip">✔ Lesson completed</span></p>
+      <a class="btn btn-outline" href="{{ url_for('student.topic_detail', topic_id=lesson.topic_id) }}">Back to topic</a>
+    {% else %}
+      <p class="muted">Finished reading? Mark this lesson complete to earn <strong>+{{ xp }} XP</strong>.</p>
+      <form method="post" action="{{ url_for('student.complete_lesson', lesson_id=lesson.lesson_id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="btn btn-lg" type="submit">✔ Mark as complete</button></form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

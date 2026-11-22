@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ quiz.title }}{% endblock %}
+{% block content %}
+<div class="container page" style="max-width:780px">
+  <p class="small"><a href="{{ url_for('quiz.quiz_list') }}">← All quizzes</a></p>
+  <div class="card">
+    <span class="chip">{{ quiz.topic_name }}</span>
+    <h1 style="margin-top:.5rem">{{ quiz.title }}</h1>
+    <p>{{ quiz.description }}</p>
+    <h3>Instructions</h3>
+    <ul>
+      <li>This quiz has <strong>{{ n_questions }}</strong> multiple-choice questions with four options each.</li>
+      <li>Use the numbered buttons to move between questions. You can change answers before submitting.</li>
+      <li>You earn <strong>10 XP</strong> for each correct answer and a <strong>50 XP bonus</strong> for a perfect score.</li>
+      <li>You may attempt the quiz again; every attempt is saved in your history.</li>
+    </ul>
+    {% if n_questions %}<a class="btn btn-lg" href="{{ url_for('quiz.take', quiz_id=quiz.quiz_id) }}">Start quiz</a>
+    {% else %}<p class="muted">This quiz has no questions yet.</p>{% endif %}
+  </div>
+  {% if attempts %}
+  <h2 class="section">Your attempts</h2>
+  <div class="table-wrap"><table><thead><tr><th>Date</th><th>Score</th><th>XP</th><th></th></tr></thead><tbody>
+    {% for a in attempts %}<tr><td>{{ a.attempted_at.strftime('%d %b %Y, %H:%M') }}</td><td>{{ a.score }}/{{ a.total_questions }}</td><td>+{{ a.xp_earned }}</td>
+      <td><a href="{{ url_for('quiz.result', attempt_id=a.attempt_id) }}">Review</a></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% endif %}
+</div>
+{% endblock %}

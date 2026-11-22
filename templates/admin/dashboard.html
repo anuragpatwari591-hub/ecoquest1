@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><div><h1>Admin Dashboard 🛠️</h1><p class="muted">Platform statistics and content management.</p></div></div>
+  <div class="grid grid-5">
+    {% for ico, val, lab in [('👥', stats.users, 'Total users'), ('🎓', stats.students, 'Students'), ('👩‍🏫', stats.teachers, 'Teachers'),
+       ('🌍', stats.topics, 'Topics'), ('📖', stats.lessons, 'Lessons'), ('❓', stats.quizzes, 'Quizzes'),
+       ('🌿', stats.challenges, 'Challenges'), ('🧠', stats.attempts, 'Quiz attempts'), ('✅', stats.completions, 'Challenges completed')] %}
+    <div class="card stat"><div class="ico">{{ ico }}</div><div><div class="val">{{ val }}</div><div class="lab">{{ lab }}</div></div></div>
+    {% endfor %}
+    <a class="card hover stat" href="{{ url_for('admin.users') }}" style="text-decoration:none"><div class="ico">➕</div><div><div class="val" style="font-size:1.1rem">Manage users</div><div class="lab">Add / disable</div></div></a>
+  </div>
+  <div class="grid grid-2 section">
+    <div class="card"><h2>Users by role</h2><div class="chart-box"><canvas id="roleChart" role="img" aria-label="Users by role"></canvas></div></div>
+    <div class="card"><h2>Content per topic</h2><div class="chart-box"><canvas id="contentChart" role="img" aria-label="Lessons, quizzes and challenges per topic"></canvas></div></div>
+  </div>
+  <div class="grid grid-4 section">
+    <a class="card hover" href="{{ url_for('admin.topics') }}" style="text-decoration:none">🌍 <strong>Topics</strong><br><span class="muted small">Add, edit, delete</span></a>
+    <a class="card hover" href="{{ url_for('admin.lessons') }}" style="text-decoration:none">📖 <strong>Lessons</strong><br><span class="muted small">Manage lesson content</span></a>
+    <a class="card hover" href="{{ url_for('teacher.quizzes') }}" style="text-decoration:none">❓ <strong>Quizzes &amp; questions</strong><br><span class="muted small">Create and edit</span></a>
+    <a class="card hover" href="{{ url_for('admin.badges') }}" style="text-decoration:none">🏅 <strong>Badges</strong><br><span class="muted small">Rules and awards</span></a>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+  var c = {{ charts|tojson }};
+  drawChart("roleChart", "doughnut", c.roles.labels, [{data: c.roles.values}]);
+  drawChart("contentChart", "bar", c.content.labels, [
+    {label: "Lessons", data: c.content.lessons}, {label: "Quizzes", data: c.content.quizzes}, {label: "Challenges", data: c.content.challenges}],
+    {scales: {y: {beginAtZero: true, ticks: {precision: 0}}}});
+</script>
+{% endblock %}

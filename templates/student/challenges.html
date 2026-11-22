@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Challenges{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><div><h1>Eco Challenges</h1><p class="muted">Do the action in real life, then mark it complete. Each challenge can be completed once per day.</p></div></div>
+  <div class="grid grid-auto">
+    {% for c in challenges %}
+    <div class="card challenge-card">
+      <div class="row between"><span class="chip">{{ c.icon }} {{ c.topic_name }}</span><span class="chip amber">{{ c.difficulty }}</span></div>
+      <h3 style="margin-top:.6rem">{{ c.title }}</h3>
+      <p class="muted small">{{ c.description }}</p>
+      <div class="row between">
+        <span class="xp">+{{ c.xp_reward }} XP</span>
+        {% if c.done_today %}<span class="chip">✔ Done today</span>
+        {% else %}
+        <form method="post" action="{{ url_for('challenge.complete', challenge_id=c.challenge_id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button class="btn btn-sm" type="submit">Mark complete</button></form>
+        {% endif %}
+      </div>
+      {% if c.times_done %}<p class="small muted" style="margin:.5rem 0 0">Completed {{ c.times_done }} time(s) so far</p>{% endif %}
+    </div>
+    {% else %}<p class="empty">No active challenges.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}

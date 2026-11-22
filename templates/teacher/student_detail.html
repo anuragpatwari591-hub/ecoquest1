@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ student.name }}{% endblock %}
+{% block content %}
+<div class="container page">
+  <p class="small"><a href="{{ url_for('teacher.students') }}">← All students</a></p>
+  <div class="page-head"><div><h1>{{ student.name }}</h1><p class="muted">{{ student.email }} · {{ student.institution or '—' }} · {{ student.class_name or '—' }}</p></div>
+    <div class="row"><span class="chip">⭐ {{ student.total_xp }} XP</span><span class="chip blue">Level {{ info.level }}</span><span class="streak">🔥 {{ student.streak }}</span></div></div>
+  <div class="grid grid-2">
+    <div class="card"><h2>Topic progress</h2>
+      {% for p in progress %}<div class="progress-row"><div class="top"><span>{{ p.icon }} {{ p.name }}</span><span>{{ p.percent }}%</span></div>
+        <div class="bar"><span data-width="{{ p.percent }}" style="width:0"></span></div></div>{% endfor %}</div>
+    <div class="card"><h2>Badges</h2>
+      {% for b in badges %}<span class="chip" style="margin:.2rem">{{ b.icon }} {{ b.name }}</span>{% else %}<p class="empty">No badges yet.</p>{% endfor %}
+      <h2 class="section">Challenges completed</h2>
+      {% for c in completions %}<div class="row between small" style="border-bottom:1px solid #f0f2f0;padding:.3rem 0"><span>{{ c.title }}</span><span class="muted">{{ c.completed_on }} · +{{ c.xp_earned }} XP</span></div>
+      {% else %}<p class="empty">None yet.</p>{% endfor %}</div>
+  </div>
+  <h2 class="section">Quiz attempts</h2>
+  <div class="table-wrap"><table><thead><tr><th>Date</th><th>Quiz</th><th>Score</th><th>XP</th></tr></thead><tbody>
+    {% for a in attempts %}<tr><td>{{ a.attempted_at.strftime('%d %b %Y, %H:%M') }}</td><td>{{ a.title }}</td><td>{{ a.score }}/{{ a.total_questions }}</td><td>+{{ a.xp_earned }}</td></tr>
+    {% else %}<tr><td colspan="4" class="empty">No attempts yet.</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endblock %}
