@@ -60,7 +60,7 @@ teacher and admin functionality; `utils/gamification.py` holds the business rule
 * **UI:** custom CSS (green palette, cards, progress bars), responsive via media queries, basic accessibility features.
 
 ## Chapter 10 — Testing
-68 pytest tests (60 documented test cases) executed against a separate MySQL database; all passed in the last run
+85 pytest tests (75 documented test cases) executed against a separate MySQL database; all passed in the last run
 (details: [testing.md](testing.md), [../TEST_RESULTS.md](../TEST_RESULTS.md)). Manual browser checks: student dashboard,
 quiz navigation, teacher dashboard charts (no console errors), landing page at 375 px width without horizontal scroll.
 Not performed: load testing, formal accessibility audit, cross-browser testing, penetration testing.

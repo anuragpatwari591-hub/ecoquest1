@@ -9,7 +9,7 @@ leaderboard (institution/class filter) · progress charts · teacher dashboard (
 admin dashboard, users, topics, lessons, badges · responsive UI · environmental content (6 topics, 12 lessons, 6 quizzes/32 questions, 12 challenges, 9 badges); game layer: Eco City, daily quests, level-up messages, two mini-games, quiz instant feedback with server-side answer locking; `create_admin.py` for real admin accounts; demo accounts only with `init_db.py --demo`.
 
 ## Actually tested
-* `python -m pytest` → **68 passed** (last run, local MySQL 8.4.9, Windows 11, Python 3.11.9).
+* `python -m pytest` → **85 passed** (last run, local MySQL 8.4.9, Windows 11, Python 3.11.9).
 * Manual (Browser pane): student login → dashboard renders from DB; quiz navigation JS works; teacher dashboard charts render, no console errors;
   landing page has no horizontal overflow at 375 px.
 
@@ -34,11 +34,16 @@ Local only. GitHub: local git repository with commits; pushed to https://github.
 
 ## Documentation status
 README, SRS + use cases, proposal/feasibility, architecture (component/deployment), DFD 0/1, ER, UML (class/sequence/activity), database,
-testing (60 test cases with real results), deployment, user manual, developer guide, final report, presentation outline/deck,
-VIVA_QUESTIONS (118 Q&A), VIVA_CODING (18 coding tasks).
+testing (75 test cases with real results), deployment, user manual, developer guide, final report, presentation outline/deck,
+VIVA_QUESTIONS (135 Q&A), VIVA_CODING (23 coding tasks).
 
 ## Next logical actions
 1. Owner creates a GitHub repository and authenticates → push.
 2. Owner creates a Railway project → deploy, then verify and record the URL.
 3. Take screenshots for the report/presentation.
 4. Rehearse viva using the viva files.
+
+## Version 3 (implemented and tested)
+Eco Pulse (live Kolkata AQI prediction game, offline fallback), Quest Map with three difficulty levels, 21 lessons / 13 quizzes / 67 questions /
+18 challenges / 19 badges / 5 mini-games, weekly XP goal, activity calendar, certificates, password change and admin reset, CSV exports,
+announcements, dark mode, sound effects, automatic backup in the desktop app. `python -m pytest` → 85 passed.

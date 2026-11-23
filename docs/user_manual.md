@@ -43,3 +43,11 @@ These are fictional accounts created by `init_db.py`. Change them for any real d
 | "Invalid or missing form token" | Reload the page and submit the form again |
 | Charts are empty | Check the internet connection (Chart.js is loaded from a CDN) |
 | Cannot connect to database | Check MySQL is running and `.env` values are correct |
+
+## New in version 3
+* **Eco Pulse** (menu): predict today's Kolkata air quality (+15 XP if right, +5 for checking in, once a day), then see the live AQI, tips and a 7-day chart. Needs internet.
+* **Quest Map**: follow each topic from Beginner to Advanced; earn up to ★★★ on each quiz level.
+* **Weekly goal**: earn 200 XP in a week for +50 bonus XP. **Certificate**: unlocks at Level 3 (print or save as PDF).
+* **Profile → Change password.** Admins can reset any user's password on the Users page.
+* **Teachers**: Announcements page; Students page → Export CSV. **Students**: Progress → Download CSV.
+* **🌙 / 🔊 buttons** in the menu: dark mode and sound on/off.

@@ -110,3 +110,12 @@ Certificate generation, CSV/PDF export, dark mode, institution-level competition
 
 # Functional / Non-functional requirements
 Listed in sections 3 and 4 above.
+
+## Version 3 functional requirements
+| ID | Requirement | Status |
+|---|---|---|
+| FR-22 | Eco Pulse: daily prediction game on Kolkata's live AQI with tips, facts and a seven-day chart | Implemented, tested |
+| FR-23 | Quest Map with Beginner/Intermediate/Advanced levels and star ratings | Implemented, tested |
+| FR-24 | Weekly XP goal with bonus; activity calendar; printable certificates | Implemented, tested |
+| FR-25 | Password change, admin password reset, CSV exports, teacher announcements | Implemented, tested |
+| FR-26 | Dark mode, sound effects and automatic backup in the desktop application | Implemented (backup and UI checked manually) |

@@ -191,3 +191,68 @@ CREATE TABLE user_badges (
   FOREIGN KEY (badge_id) REFERENCES badges(badge_id) ON DELETE CASCADE
 );
 ```
+
+## 19. Map an AQI value to its category
+```python
+def category(aqi):
+    bands = [(50, "Good"), (100, "Moderate"), (150, "Unhealthy for sensitive groups"),
+             (200, "Unhealthy"), (300, "Very unhealthy")]
+    for high, name in bands:
+        if aqi <= high:
+            return name
+    return "Hazardous"
+
+print(category(93))    # Moderate
+print(category(180))   # Unhealthy
+```
+
+## 20. XP earned this week (SQL)
+```sql
+SELECT COALESCE(SUM(xp_change), 0) AS xp
+FROM activity_log
+WHERE user_id = 5 AND xp_change > 0
+  AND YEARWEEK(created_at, 1) = YEARWEEK(CURDATE(), 1);
+```
+`YEARWEEK(..., 1)` groups dates into Monday-to-Sunday weeks.
+
+## 21. Read JSON from a web API safely
+```python
+import json, urllib.request
+
+def get_aqi(lat, lon):
+    url = ("https://air-quality-api.open-meteo.com/v1/air-quality"
+           f"?latitude={lat}&longitude={lon}&current=us_aqi")
+    try:
+        with urllib.request.urlopen(url, timeout=8) as r:
+            return json.load(r)["current"]["us_aqi"]
+    except Exception:
+        return None          # offline: the caller shows saved data and awards no XP
+```
+
+## 22. Export a CSV file from Flask
+```python
+import csv, io
+from flask import Response
+
+@app.route("/export.csv")
+def export_csv():
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["name", "xp"])
+    w.writerows([("Asha", 120), ("Ravi", 90)])
+    return Response(buf.getvalue(), mimetype="text/csv",
+                    headers={"Content-Disposition": "attachment; filename=export.csv"})
+```
+
+## 23. Change a password securely
+```python
+from werkzeug.security import check_password_hash, generate_password_hash
+
+def change_password(user, current, new):
+    if not check_password_hash(user["password_hash"], current):
+        return "Current password is incorrect"
+    if len(new) < 6:
+        return "Password too short"
+    user["password_hash"] = generate_password_hash(new)
+    return "Password changed"
+```

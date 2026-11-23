@@ -93,7 +93,7 @@ Database setup details: [docs/deployment.md](docs/deployment.md) · schema: [dat
 ```powershell
 python -m pytest -v
 ```
-Uses a separate `ecoquest_test` database. 68 automated tests (60 documented test cases) — see [docs/testing.md](docs/testing.md) and [TEST_RESULTS.md](TEST_RESULTS.md).
+Uses a separate `ecoquest_test` database. 85 automated tests (75 documented test cases) — see [docs/testing.md](docs/testing.md) and [TEST_RESULTS.md](TEST_RESULTS.md).
 
 ## Deployment
 Prepared for Railway (`Procfile`, environment-based config) but **not deployed**. See [docs/deployment.md](docs/deployment.md).

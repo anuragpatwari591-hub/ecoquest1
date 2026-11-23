@@ -133,3 +133,22 @@ Answers are short and tied to this project's actual implementation.
 116. **How are the mini-games protected from cheating?** The server picks the items, stores them in the session and re-grades the submitted answers; XP can be earned once per game per day. It is a casual game, so this is practical rather than absolute protection.
 117. **How does quiz instant feedback stay fair?** The browser asks `/quiz/<id>/check`; the first choice for each question is locked in the session and that locked choice is what is graded on submit.
 118. **How is a level-up detected?** `record_activity()` compares the level before and after adding XP and returns `level_up`; `flash_rewards()` shows the message.
+
+## H. Version 3 features (119–135)
+119. **What is Eco Pulse?** A daily game on Kolkata's live Air Quality Index: the student predicts the air-quality band first, then sees the real AQI, PM2.5, PM10, a seven-day chart, tips and an eco fact.
+120. **Where does the AQI data come from?** The free Open-Meteo air-quality API (US AQI scale, modelled data). No key is needed and only Kolkata's latitude/longitude is sent.
+121. **What are the US AQI bands?** 0–50 Good, 51–100 Moderate, 101–150 Unhealthy for sensitive groups, 151–200 Unhealthy, 201–300 Very unhealthy, above 300 Hazardous.
+122. **What are PM2.5 and PM10?** Particles 2.5 and 10 micrometres across or smaller; PM2.5 can reach deep into the lungs.
+123. **How is Eco Pulse made fair?** The AQI is hidden until the student predicts; the server compares the prediction with live data; XP (15 correct, 5 check-in) is awarded once per day and never when live data is unavailable.
+124. **What if there is no internet?** `get_air()` returns None; the page shows the last reading saved in the `air_readings` table and awards no XP.
+125. **Why cache the API result?** To avoid calling the API on every page load (30-minute cache) and to keep pages fast.
+126. **What is the Quest Map?** Each topic is a world ordered Beginner → Intermediate → Advanced; quizzes are boss levels with 1–3 stars from the best score (any attempt / 70%+ / 90%+).
+127. **How is the weekly goal calculated?** `SUM(xp_change)` from `activity_log` where `YEARWEEK(created_at, 1)` equals this week; reaching 200 XP gives a one-time +50 bonus logged as activity 'weekly'.
+128. **How are certificates unlocked?** By level: 3 = Eco Learner, 5 = Eco Guardian, 10 = Eco Champion; the page is printed or saved as PDF with the browser's print function.
+129. **How does password change work?** The current password is checked with `check_password_hash`; the new one (min 6 characters, typed twice) is hashed and stored.
+130. **How is CSV export implemented?** Python's `csv` module writes rows into a `StringIO`; Flask returns it as a `Response` with `text/csv` and a `Content-Disposition: attachment` header.
+131. **How is dark mode implemented?** CSS variables are redefined under `[data-theme="dark"]`; a small script stores the choice in `localStorage` and sets the attribute before the page paints.
+132. **How are sound effects made without audio files?** The Web Audio API creates short oscillator tones; the mute choice is stored in `localStorage`.
+133. **How is the desktop app built?** `desktop_app.py` uses pywebview (Edge WebView2) for the window, Waitress for the server and PyInstaller to make `EcoQuest.exe`.
+134. **How are backups made?** On closing, the desktop app runs `mysqldump` and keeps the ten newest automatic backups.
+135. **What new tables were added?** `announcements` (teacher messages) and `air_readings` (saved AQI readings); `quizzes` gained a `difficulty` column added by `upgrade_schema()` for existing databases.

@@ -3,7 +3,7 @@
 Environment: Windows 11, Python 3.11.9, MySQL 8.4.9 (local), Flask test client, database `ecoquest_test`.
 
 ## Automated tests
-Command: `python -m pytest -q` → **68 passed** (last run; ~16 s). Full per-case table: [docs/testing.md](docs/testing.md).
+Command: `python -m pytest -q` → **85 passed** (last run; ~16 s). Full per-case table: [docs/testing.md](docs/testing.md).
 
 | File | Tests (pytest items) |
 |---|---|
@@ -27,3 +27,5 @@ returns an empty tuple) was fixed in `utils/database.py` and the suite re-run.
 
 ## Not tested
 Cross-browser, load/performance, formal accessibility audit, penetration testing, cloud deployment.
+
+| tests/test_v3.py | Eco Pulse (live/offline), Quest Map, weekly goal, certificate, passwords, CSV, announcements, new games |

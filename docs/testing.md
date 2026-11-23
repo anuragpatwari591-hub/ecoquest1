@@ -5,10 +5,10 @@ All tests are automated with **pytest** and run against a separate MySQL databas
 
 Run: `python -m pytest -v`
 
-Last executed: **2026-11-22** — pytest summary line: `68 passed in 19.82s`
+Last executed: **2026-11-22** — pytest summary line: `85 passed`
 
 Test case mapping: each `TC-xx` below is the comment on the corresponding test function in `tests/`.
-Parameterised tests count as one test case here. Total documented test cases: **60** — passed: **60**.
+Parameterised tests count as one test case here. Total documented test cases: **75** — passed: **75**.
 
 | Test Case ID | Description | Precondition | Steps | Expected Result | Actual Result | Status |
 |---|---|---|---|---|---|---|
@@ -72,6 +72,21 @@ Parameterised tests count as one test case here. Total documented test cases: **
 | TC-58 | Quiz check validation | Fresh seeded test database (ecoquest_test) | Send an option from another question | HTTP 400 | As expected | Passed |
 | TC-59 | Eco City stages | Fresh seeded test database (ecoquest_test) | city_stage for levels 1, 5, 10 | Pollution 95/55/5; names and air quality change | As expected | Passed |
 | TC-60 | Daily quests bonus | Fresh seeded test database (ecoquest_test) | Do lesson, challenge, quiz, game in one day | Quest bonus awarded once; total XP matches | As expected | Passed |
+| TC-61 | AQI categories, prediction groups, daily fact | Fresh seeded test database (ecoquest_test) | Call category(), guess_group(), daily_fact() | Correct bands and groups | As expected | Passed |
+| TC-62 | Eco Pulse hides AQI before prediction | Fresh seeded test database (ecoquest_test) | GET /pulse/ as a student (live data mocked) | Prompt shown; AQI hidden | As expected | Passed |
+| TC-63 | Correct prediction awards XP once | Fresh seeded test database (ecoquest_test) | POST correct guess, then another guess | +15 XP once; AQI revealed | As expected | Passed |
+| TC-64 | Wrong prediction | Fresh seeded test database (ecoquest_test) | POST wrong guess | +5 check-in XP | As expected | Passed |
+| TC-65 | Eco Pulse offline | Fresh seeded test database (ecoquest_test) | POST guess with no live data | No XP; page still loads | As expected | Passed |
+| TC-66 | Quest Map and difficulty levels | Fresh seeded test database (ecoquest_test) | GET /student/map; count quiz difficulties | Page loads; 3 levels present | As expected | Passed |
+| TC-67 | Weekly goal bonus | Fresh seeded test database (ecoquest_test) | Record 150 + 60 + 10 XP | +50 bonus exactly once | As expected | Passed |
+| TC-68 | Certificate lock/unlock | Fresh seeded test database (ecoquest_test) | Open certificate at 0 XP and 450 XP | Locked, then Eco Learner | As expected | Passed |
+| TC-69 | Change password | Fresh seeded test database (ecoquest_test) | Wrong current, then correct change, then login | Rejected, then new password works | As expected | Passed |
+| TC-70 | Admin password reset | Fresh seeded test database (ecoquest_test) | Admin resets; user logs in | Login with new password succeeds | As expected | Passed |
+| TC-71 | CSV exports | Fresh seeded test database (ecoquest_test) | Download student and teacher CSVs | text/csv; students blocked from class export | As expected | Passed |
+| TC-72 | Announcements | Fresh seeded test database (ecoquest_test) | Teacher posts; student dashboard; delete | Shown, then removed | As expected | Passed |
+| TC-73 | Three new mini-games | Fresh seeded test database (ecoquest_test) | Play perfect rounds of each | Graded 8/8 | As expected | Passed |
+| TC-74 | Eco Pulse badge rule | Fresh seeded test database (ecoquest_test) | Log 5 check-ins; check badges | Air Watcher awarded | As expected | Passed |
+| TC-75 | Activity calendar and pages | Fresh seeded test database (ecoquest_test) | Build calendar; open new pages | 28 days; pages load | As expected | Passed |
 
 ## What is NOT covered by automated tests
 
