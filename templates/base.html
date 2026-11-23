@@ -7,6 +7,7 @@
   <meta name="description" content="EcoQuest - a gamified environmental education platform for schools and colleges.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>try{var t=localStorage.getItem("eq-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
@@ -18,10 +19,12 @@
       {% set role = session.get('role') %}
       {% if role == 'student' %}
         <a href="{{ url_for('student.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('extras.quest_map_page') }}">🗺️ Quest Map</a>
         <a href="{{ url_for('student.topics') }}">Learn</a>
         <a href="{{ url_for('quiz.quiz_list') }}">Quizzes</a>
         <a href="{{ url_for('challenge.challenge_list') }}">Challenges</a>
         <a href="{{ url_for('games.game_list') }}">Games</a>
+        <a href="{{ url_for('pulse.index') }}">🌫️ Eco Pulse</a>
         <a href="{{ url_for('student.leaderboard_page') }}">Leaderboard</a>
         <a href="{{ url_for('student.progress') }}">Progress</a>
       {% elif role == 'teacher' %}
@@ -29,6 +32,8 @@
         <a href="{{ url_for('teacher.students') }}">Students</a>
         <a href="{{ url_for('teacher.quizzes') }}">Quizzes</a>
         <a href="{{ url_for('teacher.challenges') }}">Challenges</a>
+        <a href="{{ url_for('extras.announcements') }}">Announcements</a>
+        <a href="{{ url_for('pulse.index') }}">Eco Pulse</a>
         <a href="{{ url_for('student.leaderboard_page') }}">Leaderboard</a>
       {% elif role == 'admin' %}
         <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
@@ -38,12 +43,15 @@
         <a href="{{ url_for('teacher.quizzes') }}">Quizzes</a>
         <a href="{{ url_for('teacher.challenges') }}">Challenges</a>
         <a href="{{ url_for('admin.badges') }}">Badges</a>
+        <a href="{{ url_for('extras.announcements') }}">Announcements</a>
         <a href="{{ url_for('teacher.dashboard') }}">Analytics</a>
       {% else %}
         <a href="{{ url_for('index') }}#topics">Topics</a>
         <a href="{{ url_for('index') }}#how">How it works</a>
         <a href="{{ url_for('index') }}#features">Features</a>
       {% endif %}
+      <button type="button" class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Dark / light mode">🌙</button>
+      <button type="button" class="icon-btn" id="soundToggle" aria-label="Toggle sound effects" title="Sound on / off">🔊</button>
       {% if role %}
         <a href="{{ url_for('student.profile') }}">👤 {{ session.get('name') }}</a>
         <a href="{{ url_for('auth.logout') }}">Logout</a>

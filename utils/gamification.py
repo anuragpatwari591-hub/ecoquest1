@@ -100,9 +100,15 @@ def record_activity(conn, user_id, amount, activity, description, today=None):
                   "AND DATE(created_at) = CURDATE()", (user_id,)):
         quest_bonus = config.XP_DAILY_QUEST_BONUS
         add_xp(conn, user_id, quest_bonus, "quest", "Daily quests complete bonus")
+    weekly_bonus = 0
+    wk = weekly_progress(conn, user_id)
+    if wk["xp"] >= wk["goal"] and not wk["claimed"]:
+        weekly_bonus = config.XP_WEEKLY_BONUS
+        add_xp(conn, user_id, weekly_bonus, "weekly", "Weekly XP goal reached")
     new_badges = check_badges(conn, user_id)
     new_level = calculate_level(fetch_one(conn, "SELECT total_xp FROM users WHERE user_id = %s", (user_id,))["total_xp"])
-    return {"xp": amount + bonus + quest_bonus, "bonus": bonus, "quest_bonus": quest_bonus,
+    return {"xp": amount + bonus + quest_bonus + weekly_bonus, "bonus": bonus, "quest_bonus": quest_bonus,
+            "weekly_bonus": weekly_bonus,
             "level_up": new_level if new_level > old_level else None, "badges": new_badges}
 
 
@@ -121,6 +127,59 @@ def daily_quests(conn, user_id):
               for k in QUEST_ACTIVITIES]
     return {"quests": quests, "done": sum(q["done"] for q in quests), "all_done": all(q["done"] for q in quests),
             "bonus": config.XP_DAILY_QUEST_BONUS}
+
+
+# ---------------------------------------------------------------- weekly goal & calendar
+def weekly_progress(conn, user_id):
+    """XP earned this week (Monday-Sunday) towards the weekly goal; the bonus itself is not counted."""
+    row = fetch_one(conn, "SELECT COALESCE(SUM(xp_change), 0) AS xp FROM activity_log WHERE user_id = %s "
+                          "AND xp_change > 0 AND activity <> 'weekly' AND YEARWEEK(created_at, 1) = YEARWEEK(CURDATE(), 1)", (user_id,))
+    claimed = fetch_one(conn, "SELECT 1 AS x FROM activity_log WHERE user_id = %s AND activity = 'weekly' "
+                              "AND YEARWEEK(created_at, 1) = YEARWEEK(CURDATE(), 1)", (user_id,)) is not None
+    xp = int(row["xp"])
+    goal = config.WEEKLY_GOAL_XP
+    return {"xp": xp, "goal": goal, "percent": min(100, int(xp * 100 / goal)), "claimed": claimed, "bonus": config.XP_WEEKLY_BONUS}
+
+
+def activity_calendar(conn, user_id, days=28, today=None):
+    """Last `days` days with a flag for whether the student was active (for the streak calendar)."""
+    today = today or date.today()
+    rows = fetch_all(conn, "SELECT DISTINCT DATE(created_at) AS d FROM activity_log WHERE user_id = %s "
+                           "AND created_at >= DATE_SUB(CURDATE(), INTERVAL %s DAY)", (user_id, days))
+    active = {r["d"] for r in rows}
+    out = []
+    for i in range(days - 1, -1, -1):
+        d = today - timedelta(days=i)
+        out.append({"date": d, "active": d in active})
+    return out
+
+
+def quest_map(conn, user_id):
+    """Per topic: the recommended path lessons -> quizzes (boss levels) -> challenges, with stars."""
+    topics = fetch_all(conn, "SELECT * FROM topics ORDER BY topic_id")
+    for t in topics:
+        t["lessons"] = fetch_all(conn, "SELECT l.lesson_id, l.title, l.difficulty, "
+                                       "(SELECT COUNT(*) FROM user_progress p WHERE p.lesson_id = l.lesson_id AND p.user_id = %s) AS done "
+                                       "FROM lessons l WHERE l.topic_id = %s ORDER BY FIELD(l.difficulty,'Beginner','Intermediate','Advanced'), l.lesson_id",
+                                 (user_id, t["topic_id"]))
+        quizzes = fetch_all(conn, "SELECT q.quiz_id, q.title, q.difficulty, (SELECT MAX(ROUND(a.score * 100 / a.total_questions)) "
+                                  "FROM quiz_attempts a WHERE a.quiz_id = q.quiz_id AND a.user_id = %s) AS best "
+                                  "FROM quizzes q WHERE q.topic_id = %s ORDER BY FIELD(q.difficulty,'Beginner','Intermediate','Advanced'), q.quiz_id",
+                            (user_id, t["topic_id"]))
+        for q in quizzes:
+            b = q["best"]
+            q["stars"] = 0 if b is None else 3 if b >= 90 else 2 if b >= 70 else 1
+        t["quizzes"] = quizzes
+        t["challenges_done"] = fetch_one(conn, "SELECT COUNT(DISTINCT cc.challenge_id) AS n FROM challenge_completions cc "
+                                               "JOIN challenges c ON cc.challenge_id = c.challenge_id WHERE cc.user_id = %s AND c.topic_id = %s",
+                                         (user_id, t["topic_id"]))["n"]
+        t["challenges_total"] = fetch_one(conn, "SELECT COUNT(*) AS n FROM challenges WHERE topic_id = %s AND is_active = 1", (t["topic_id"],))["n"]
+        steps = len(t["lessons"]) + len(quizzes)
+        done = sum(1 for l in t["lessons"] if l["done"]) + sum(1 for q in quizzes if q["stars"])
+        t["percent"] = int(done * 100 / steps) if steps else 0
+        t["stars"] = sum(q["stars"] for q in quizzes)
+        t["max_stars"] = 3 * len(quizzes)
+    return topics
 
 
 # ---------------------------------------------------------------- Eco City
@@ -160,8 +219,9 @@ def _badge_progress_value(conn, user_id, badge):
         args = (user_id, topic, user_id, topic)
     elif rule == "streak":
         sql, args = "SELECT streak AS n FROM users WHERE user_id = %s", (user_id,)
-    elif rule == "games":
-        sql, args = "SELECT COUNT(*) AS n FROM activity_log WHERE user_id = %s AND activity = 'game'", (user_id,)
+    elif rule in ("games", "pulse", "weekly"):
+        act = {"games": "game", "pulse": "pulse", "weekly": "weekly"}[rule]
+        sql, args = "SELECT COUNT(*) AS n FROM activity_log WHERE user_id = %s AND activity = %s", (user_id, act)
     elif rule == "xp":
         sql, args = "SELECT total_xp AS n FROM users WHERE user_id = %s", (user_id,)
     else:

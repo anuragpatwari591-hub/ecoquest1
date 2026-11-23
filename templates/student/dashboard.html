@@ -8,6 +8,9 @@
     <span class="streak" title="Consecutive days with activity">🔥 {{ user.streak }} Day Streak</span>
   </div>
 
+  {% for a in announcements %}
+  <div class="announce"><strong>📢 {{ a.title }}</strong> — {{ a.message }} <span class="muted small">({{ a.author or 'Teacher' }}, {{ a.created_at.strftime('%d %b') }})</span></div>
+  {% endfor %}
   <div class="grid grid-4">
     <div class="card stat"><div class="ico">⭐</div><div><div class="val">{{ user.total_xp }}</div><div class="lab">Total XP</div></div></div>
     <div class="card stat"><div class="ico">🎖️</div><div><div class="val">Level {{ info.level }}</div><div class="lab">{{ info.xp_to_next }} XP to next level</div></div></div>
@@ -20,6 +23,27 @@
       <div class="top"><span>Level {{ info.level }} → Level {{ info.level + 1 }}</span><span>{{ info.xp_into_level }} / 100 XP</span></div>
       <div class="bar lg" role="progressbar" aria-valuenow="{{ info.percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="Level progress">
         <span data-width="{{ info.percent }}" style="width:0"></span></div>
+    </div>
+  </div>
+
+  <div class="grid grid-3 section">
+    <div class="card">
+      <h3>📅 Weekly goal</h3>
+      <div class="progress-row" style="margin:.4rem 0"><div class="top"><span>{{ weekly.xp }} / {{ weekly.goal }} XP this week</span><span>{{ weekly.percent }}%</span></div>
+        <div class="bar"><span data-width="{{ weekly.percent }}" style="width:0"></span></div></div>
+      <p class="small muted" style="margin:0">{% if weekly.claimed %}✔ Goal reached — +{{ weekly.bonus }} XP earned!{% else %}Reach it for a +{{ weekly.bonus }} XP bonus.{% endif %}</p>
+    </div>
+    <a class="card hover pulse-card" href="{{ url_for('pulse.index') }}" style="text-decoration:none;color:inherit">
+      <h3>🌫️ Eco Pulse — Kolkata</h3>
+      <p class="small" style="margin:.3rem 0">{% if pulse_done %}✔ Today's air prediction done. See the live AQI and tips.{% else %}Predict today's air quality for <strong>+15 XP</strong> and get your daily eco fact.{% endif %}</p>
+      <span class="btn btn-sm">{% if pulse_done %}Open Eco Pulse{% else %}Play today's Pulse{% endif %}</span>
+    </a>
+    <div class="card">
+      <h3>🎓 Certificate</h3>
+      {% if info.level >= 3 %}<p class="small" style="margin:.3rem 0">You've unlocked a certificate for reaching Level {{ info.level }}!</p>
+        <a class="btn btn-sm" href="{{ url_for('extras.certificate') }}">View &amp; print</a>
+      {% else %}<p class="small muted" style="margin:.3rem 0">Reach Level 3 to unlock your Eco Learner certificate ({{ 200 - user.total_xp if user.total_xp < 200 else 0 }} XP to go).</p>{% endif %}
+      <p style="margin:.6rem 0 0"><a class="small" href="{{ url_for('extras.quest_map_page') }}">🗺️ Open your Quest Map →</a></p>
     </div>
   </div>
 

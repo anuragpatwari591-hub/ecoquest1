@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Certificate{% endblock %}
+{% block content %}
+<div class="container page">
+  <p class="no-print"><a href="{{ url_for('student.dashboard') }}">← Dashboard</a>
+    <button class="btn btn-sm" type="button" onclick="window.print()">🖨️ Print / Save as PDF</button></p>
+  <div class="certificate">
+    <div class="cert-inner">
+      <div class="cert-leaf" aria-hidden="true">🌱</div>
+      <p class="cert-small">EcoQuest — Gamified Environmental Education Platform</p>
+      <h1 class="cert-title">Certificate of Achievement</h1>
+      <p class="cert-small">This certifies that</p>
+      <p class="cert-name">{{ user.name }}</p>
+      {% if user.institution %}<p class="cert-small">{{ user.institution }}{% if user.class_name %} · {{ user.class_name }}{% endif %}</p>{% endif %}
+      <p>has earned the title</p>
+      <p class="cert-rank">{{ title }}</p>
+      <p>by reaching <strong>Level {{ info.level }}</strong> with <strong>{{ user.total_xp }} XP</strong>,
+        completing <strong>{{ lessons }}</strong> lessons and unlocking <strong>{{ badges }}</strong> badges.</p>
+      <div class="cert-foot"><div>{{ today.strftime('%d %B %Y') }}<br><span class="cert-small">Date</span></div>
+        <div>EcoQuest<br><span class="cert-small">Issued by the platform</span></div></div>
+    </div>
+  </div>
+  <p class="small muted center no-print">Next titles: Eco Learner (Level 3) · Eco Guardian (Level 5) · Eco Champion (Level 10)</p>
+</div>
+{% endblock %}

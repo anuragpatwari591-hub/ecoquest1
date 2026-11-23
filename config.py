@@ -42,3 +42,7 @@ XP_PER_LEVEL = 100         # level = XP // 100 + 1
 XP_GAME_PER_CORRECT = 5    # mini-games: per correct answer (+ perfect bonus below)
 XP_GAME_PERFECT_BONUS = 10
 XP_DAILY_QUEST_BONUS = 25  # bonus for finishing all four daily quests
+WEEKLY_GOAL_XP = 200       # XP to earn in a week (Mon-Sun) ...
+XP_WEEKLY_BONUS = 50       # ... for this one-time weekly bonus
+XP_PULSE_CORRECT = 15      # Eco Pulse daily prediction: correct
+XP_PULSE_TRY = 5           # Eco Pulse daily prediction: wrong (still rewarded for checking in)

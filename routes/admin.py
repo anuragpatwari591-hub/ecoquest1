@@ -13,7 +13,9 @@ BADGE_RULES = {
     "quizzes": "Quizzes completed",
     "topic_challenges": "Challenges completed in a topic",
     "topic_activity": "Lessons + challenges in a topic",
-    "games": "Mini-games played (days)",
+    "games": "Mini-game XP awards",
+    "pulse": "Eco Pulse check-ins",
+    "weekly": "Weekly goals reached",
     "streak": "Day streak",
     "xp": "Total XP",
 }

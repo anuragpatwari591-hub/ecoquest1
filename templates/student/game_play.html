@@ -60,6 +60,7 @@
       if (ok) { score++; combo++; bestCombo = Math.max(bestCombo, combo); btn.classList.add("right"); }
       else { combo = 0; btn.classList.add("wrong"); }
       $("hudScore").textContent = score; $("hudCombo").textContent = combo;
+      if (window.sfx) window.sfx(ok ? "ok" : "bad");
       $("feedback").className = "feedback " + (ok ? "ok" : "bad");
       $("feedback").textContent = (ok ? "✅ Correct! " : "❌ Not quite. ") + it.why + (ok && combo >= 3 ? "  🔥 Combo x" + combo + "!" : "");
       setTimeout(function () { i++; if (i >= items.length) finish(); else showItem(); }, ok ? 900 : 1700);

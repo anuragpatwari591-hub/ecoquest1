@@ -84,7 +84,26 @@ class Backend:
             time.sleep(0.5)
         raise RuntimeError("The EcoQuest server did not start.")
 
+    def backup(self, keep=10):
+        """Save an automatic database backup (backups/auto_*.sql), keeping the newest `keep` files."""
+        try:
+            folder = os.path.join(BASE, "backups")
+            os.makedirs(folder, exist_ok=True)
+            path = os.path.join(folder, time.strftime("auto_%Y%m%d_%H%M%S.sql"))
+            env = dict(os.environ, MYSQL_PWD=os.environ.get("DB_PASSWORD", ""))
+            subprocess.run([os.path.join(MYSQL_BIN, "mysqldump.exe"), "-h", os.environ.get("DB_HOST", "127.0.0.1"),
+                            "-P", os.environ.get("DB_PORT", "3306"), "-u", os.environ.get("DB_USER", "root"),
+                            "--single-transaction", "--no-tablespaces", f"--result-file={path}", os.environ.get("DB_NAME", "ecoquest")],
+                           env=env, creationflags=NO_WINDOW, timeout=60)
+            autos = sorted(f for f in os.listdir(folder) if f.startswith("auto_"))
+            for old in autos[:-keep]:
+                os.remove(os.path.join(folder, old))
+            log.info("backup saved: %s", path)
+        except Exception:
+            log.exception("automatic backup failed")
+
     def stop(self):
+        self.backup()
         if self.started_mysql:
             try:
                 subprocess.run([os.path.join(MYSQL_BIN, "mysqladmin.exe"), "-uroot", "shutdown"],

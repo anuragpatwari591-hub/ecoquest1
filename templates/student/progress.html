@@ -2,7 +2,10 @@
 {% block title %}My Progress{% endblock %}
 {% block content %}
 <div class="container page">
-  <div class="page-head"><h1>📈 My Progress</h1></div>
+  <div class="page-head"><h1>📈 My Progress</h1><a class="btn btn-outline btn-sm" href="{{ url_for('extras.progress_csv') }}">⬇ Download CSV</a></div>
+  <div class="card" style="margin-bottom:1.1rem"><h2>🔥 Activity calendar (last 4 weeks)</h2>
+    <div class="cal">{% for d in calendar %}<div class="cal-day {% if d.active %}on{% endif %}" title="{{ d.date.strftime('%a %d %b') }}{% if d.active %} — active{% endif %}">{{ d.date.day }}</div>{% endfor %}</div>
+    <p class="small muted" style="margin:.5rem 0 0">Green days = you learned, played or acted. Keep the chain going!</p></div>
   <div class="grid grid-2">
     <div class="card"><h2>Topic progress</h2>
       {% if topics %}<div class="chart-box"><canvas id="topicChart" aria-label="Topic progress chart" role="img"></canvas></div>{% endif %}</div>

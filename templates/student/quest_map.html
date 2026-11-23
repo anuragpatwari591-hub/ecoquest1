@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Quest Map{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><div><h1>🗺️ Quest Map</h1>
+    <p class="muted">Each world goes from Beginner to Advanced: read the lessons, then beat the quiz levels (boss fights) to earn up to ★★★.</p></div></div>
+  <div class="grid grid-2">
+    {% for t in topics %}
+    <div class="card world">
+      <div class="row between"><h2 style="margin:0">{{ t.icon }} {{ t.name }}</h2><span class="chip amber">★ {{ t.stars }}/{{ t.max_stars }}</span></div>
+      <div class="bar" style="margin:.6rem 0"><span data-width="{{ t.percent }}" style="width:0"></span></div>
+      <ol class="path">
+        {% for l in t.lessons %}
+        <li class="node {% if l.done %}done{% endif %}"><a href="{{ url_for('student.lesson', lesson_id=l.lesson_id) }}">
+          <span class="node-ico">{% if l.done %}✔{% else %}📖{% endif %}</span>
+          <span>{{ l.title }}<br><span class="small muted">Lesson · {{ l.difficulty }}</span></span></a></li>
+        {% endfor %}
+        {% for q in t.quizzes %}
+        <li class="node boss {% if q.stars %}done{% endif %}"><a href="{{ url_for('quiz.quiz_intro', quiz_id=q.quiz_id) }}">
+          <span class="node-ico">{% if q.difficulty == 'Advanced' %}🐉{% elif q.difficulty == 'Intermediate' %}⚔️{% else %}🧠{% endif %}</span>
+          <span>{{ q.title }}<br><span class="small muted">Quiz level · {{ q.difficulty }}</span></span>
+          <span class="stars" aria-label="{{ q.stars }} of 3 stars">{% for i in range(3) %}{% if i < q.stars %}★{% else %}☆{% endif %}{% endfor %}</span></a></li>
+        {% endfor %}
+        <li class="node {% if t.challenges_done %}done{% endif %}"><a href="{{ url_for('challenge.challenge_list') }}">
+          <span class="node-ico">🌿</span><span>Real-world challenges<br><span class="small muted">{{ t.challenges_done }}/{{ t.challenges_total }} different challenges done</span></span></a></li>
+      </ol>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="small muted section">Stars: ★ any attempt · ★★ 70%+ · ★★★ 90%+ best score.</p>
+</div>
+{% endblock %}

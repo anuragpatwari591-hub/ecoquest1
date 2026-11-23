@@ -37,6 +37,15 @@ HTML5 · CSS3 · vanilla JavaScript · Chart.js (CDN) · Python 3.11 · Flask ·
 ## Architecture
 Three tiers: Browser (HTML/CSS/JS) → Flask (routes + business logic) → MySQL. See [docs/architecture.md](docs/architecture.md).
 
+## New in v3
+* **Eco Pulse — Kolkata:** live Air Quality Index (Open-Meteo, US AQI, modelled data) as a daily prediction game (+15 XP correct, +5 for checking in), 7-day AQI chart, health tips and an eco fact of the day. Works offline with the last saved reading.
+* **Quest Map:** every topic is a world from Beginner to Advanced; quizzes are boss levels with 1–3 stars.
+* **More content:** 21 lessons (incl. AQI, PM2.5, Kolkata's mangroves and wetlands), 13 quizzes at three difficulty levels, 18 challenges, 19 badges.
+* **5 mini-games:** Waste Sorting Rush, Pollution Detective, Eco Myth Buster, Renewable or Not?, Water Wise.
+* **Weekly XP goal (+50 bonus), 4-week activity calendar, printable certificates (Eco Learner / Guardian / Champion).**
+* **Accounts:** change password; admin password reset. **Teachers:** announcements, CSV export of class results. **Students:** CSV export of their progress.
+* **Dark mode, sound effects (mute button), automatic database backup when the desktop app closes.**
+
 ## EcoQuest as a Windows application
 EcoQuest can run as a normal Windows program (own window, no browser, no address bar):
 

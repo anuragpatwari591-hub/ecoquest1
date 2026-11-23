@@ -12,13 +12,13 @@ from datetime import date, timedelta
 import pymysql
 
 import config
-from database import seed_data
+from database import extra_content, seed_data
 from utils.auth import hash_password
 from utils.database import connect, execute, fetch_one
 from utils.gamification import check_badges, add_xp
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TABLES = ["activity_log", "user_progress", "user_badges", "badges", "challenge_completions",
+TABLES = ["announcements", "air_readings", "activity_log", "user_progress", "user_badges", "badges", "challenge_completions",
           "challenges", "quiz_answers", "quiz_attempts", "options", "questions", "quizzes",
           "lessons", "topics", "users", "roles"]
 
@@ -68,6 +68,40 @@ def seed_content(conn):
         execute(conn,
                 "INSERT INTO badges (name, description, icon, rule_type, rule_value, topic_id) VALUES (%s,%s,%s,%s,%s,%s)",
                 (name, desc, icon, rule, value, topic_ids.get(topic)))
+    conn.commit()
+
+
+def upgrade_schema(conn):
+    """Add columns introduced after the first release (safe to repeat)."""
+    has = fetch_one(conn, "SELECT COUNT(*) AS n FROM information_schema.columns WHERE table_schema = DATABASE() "
+                          "AND table_name = 'quizzes' AND column_name = 'difficulty'")
+    if not has["n"]:
+        execute(conn, "ALTER TABLE quizzes ADD COLUMN difficulty ENUM('Beginner','Intermediate','Advanced') "
+                      "NOT NULL DEFAULT 'Beginner' AFTER description")
+        conn.commit()
+
+
+def ensure_extra_content(conn):
+    """Add the extra levels of content (matched by title, safe to repeat)."""
+    tid = lambda name: fetch_one(conn, "SELECT topic_id FROM topics WHERE name = %s", (name,))["topic_id"]
+    for topic, title, diff, intro, expl, points, tip in extra_content.LESSONS:
+        if not fetch_one(conn, "SELECT 1 AS x FROM lessons WHERE title = %s", (title,)):
+            execute(conn, "INSERT INTO lessons (topic_id, title, difficulty, introduction, explanation, key_points, eco_tip) "
+                          "VALUES (%s,%s,%s,%s,%s,%s,%s)", (tid(topic), title, diff, intro, expl, "\n".join(points), tip))
+    for topic, title, desc, diff, questions in extra_content.QUIZZES:
+        if fetch_one(conn, "SELECT 1 AS x FROM quizzes WHERE title = %s", (title,)):
+            continue
+        quiz_id = execute(conn, "INSERT INTO quizzes (topic_id, title, description, difficulty) VALUES (%s,%s,%s,%s)",
+                          (tid(topic), title, desc, diff))
+        for text, opts, correct, why in questions:
+            qid = execute(conn, "INSERT INTO questions (quiz_id, question_text, explanation) VALUES (%s,%s,%s)", (quiz_id, text, why))
+            for i, opt in enumerate(opts):
+                execute(conn, "INSERT INTO options (question_id, option_text, is_correct) VALUES (%s,%s,%s)",
+                        (qid, opt, 1 if i == correct else 0))
+    for topic, title, desc, diff, xp in extra_content.CHALLENGES:
+        if not fetch_one(conn, "SELECT 1 AS x FROM challenges WHERE title = %s", (title,)):
+            execute(conn, "INSERT INTO challenges (topic_id, title, description, difficulty, xp_reward) VALUES (%s,%s,%s,%s,%s)",
+                    (tid(topic), title, desc, diff, xp))
     conn.commit()
 
 
@@ -150,6 +184,8 @@ def init(reset=False, demo_users=False, with_sample_activity=False):
         if fetch_one(conn, "SELECT COUNT(*) AS n FROM roles")["n"] == 0:
             seed_content(conn)
             print("Environmental content loaded.")
+        upgrade_schema(conn)
+        ensure_extra_content(conn)
         ensure_badges(conn)
         if demo_users and fetch_one(conn, "SELECT COUNT(*) AS n FROM users")["n"] == 0:
             seed_users(conn)

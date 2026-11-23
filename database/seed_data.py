@@ -150,6 +150,16 @@ BADGES = [
     ("Eco Champion", "Reach 1000 XP.", "🏆", "xp", 1000, None),
     ("Game On", "Play your first eco mini-game.", "🎮", "games", 1, None),
     ("Sorting Star", "Play eco mini-games on 5 different days.", "⭐", "games", 5, None),
+    ("Game Master", "Earn mini-game XP 15 times.", "🕹️", "games", 15, None),
+    ("Knowledge Seeker", "Complete 6 lessons.", "📚", "lessons", 6, None),
+    ("Eco Scholar", "Complete 15 lessons.", "🎓", "lessons", 15, None),
+    ("Quiz Champion", "Complete 10 quizzes.", "🧠", "quizzes", 10, None),
+    ("Eco Guardian", "Reach 500 XP.", "🛡️", "xp", 500, None),
+    ("3-Day Streak", "Stay active three days in a row.", "✨", "streak", 3, None),
+    ("Fortnight Hero", "Stay active fourteen days in a row.", "🌟", "streak", 14, None),
+    ("Air Watcher", "Complete 5 daily Eco Pulse check-ins.", "🌫️", "pulse", 5, None),
+    ("Pulse Pro", "Complete 15 daily Eco Pulse check-ins.", "📡", "pulse", 15, None),
+    ("Weekly Warrior", "Reach the weekly XP goal.", "📅", "weekly", 1, None),
     ("Energy Explorer", "Complete 3 renewable-energy lessons or challenges.", "⚡", "topic_activity", 3, "Renewable Energy"),
 ]
 

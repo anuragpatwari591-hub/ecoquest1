@@ -7,8 +7,8 @@ from flask import (Blueprint, abort, flash, redirect, render_template, request,
 import config
 from utils.auth import login_required
 from utils.database import execute, fetch_all, fetch_one, get_db
-from utils.gamification import (city_stage, daily_quests, leaderboard, level_info,
-                                record_activity, student_rank, topic_progress_list)
+from utils.gamification import (activity_calendar, city_stage, daily_quests, leaderboard, level_info,
+                                record_activity, student_rank, topic_progress_list, weekly_progress)
 from utils.ui import flash_rewards
 
 student_bp = Blueprint("student", __name__)
@@ -54,7 +54,12 @@ def dashboard():
                            quests=daily_quests(db, uid),
                            progress=progress, todays=todays, next_lessons=next_lessons,
                            next_quizzes=next_quizzes, activity=activity,
-                           rank=student_rank(db, uid))
+                           rank=student_rank(db, uid), weekly=weekly_progress(db, uid),
+                           announcements=fetch_all(db, "SELECT a.*, u.name AS author FROM announcements a LEFT JOIN users u "
+                                                       "ON a.created_by = u.user_id WHERE a.is_active = 1 "
+                                                       "ORDER BY a.created_at DESC, a.announcement_id DESC LIMIT 3"),
+                           pulse_done=fetch_one(db, "SELECT 1 AS x FROM activity_log WHERE user_id = %s AND activity = 'pulse' "
+                                                    "AND DATE(created_at) = CURDATE()", (uid,)) is not None)
 
 
 @student_bp.route("/student/topics")
@@ -150,6 +155,7 @@ def progress():
     history = fetch_all(db, "SELECT * FROM activity_log WHERE user_id = %s ORDER BY created_at DESC, log_id DESC LIMIT 30",
                         (uid,))
     return render_template("student/progress.html", topics=topics, attempts=attempts,
+                           calendar=activity_calendar(db, uid),
                            daily_xp=[{"day": str(d["day"]), "xp": int(d["xp"])} for d in daily_xp],
                            badges=badges, history=history)
 

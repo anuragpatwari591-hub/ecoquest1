@@ -13,6 +13,7 @@
       <div class="field"><label for="class_name">Class</label><input type="text" id="class_name" name="class_name" value="{{ user.class_name or '' }}" maxlength="50"></div>
       <button class="btn" type="submit">Save changes</button>
     </form>
+    <p class="row" style="margin-top:1rem"><a class="btn btn-outline btn-sm" href="{{ url_for('extras.change_password') }}">🔑 Change password</a>{% if session.get('role') == 'student' and info.level >= 3 %} <a class="btn btn-outline btn-sm" href="{{ url_for('extras.certificate') }}">🎓 My certificate</a>{% endif %}</p>
   </div>
 </div>
 {% endblock %}

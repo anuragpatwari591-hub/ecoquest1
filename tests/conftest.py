@@ -35,6 +35,7 @@ def clean_state():
         cur.execute("DELETE FROM users WHERE email NOT LIKE '%@ecoquest.test'")
         cur.execute("UPDATE users SET total_xp = 0, streak = 0, last_active = NULL, is_active = 1")
         cur.execute("DELETE FROM quizzes WHERE title LIKE 'TEST %'")
+        cur.execute("DELETE FROM announcements")
         cur.execute("DELETE FROM challenges WHERE title LIKE 'TEST %'")
     conn.commit()
     conn.close()

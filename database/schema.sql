@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS quizzes (
     topic_id    INT NOT NULL,
     title       VARCHAR(150) NOT NULL,
     description TEXT NOT NULL,
+    difficulty  ENUM('Beginner','Intermediate','Advanced') NOT NULL DEFAULT 'Beginner',
     created_by  INT DEFAULT NULL,
     FOREIGN KEY (topic_id) REFERENCES topics(topic_id) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE SET NULL,
@@ -165,4 +166,27 @@ CREATE TABLE IF NOT EXISTS activity_log (
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     INDEX idx_log_user (user_id, created_at)
+) ENGINE=InnoDB;
+
+-- Teacher/admin announcements shown on the student dashboard
+CREATE TABLE IF NOT EXISTS announcements (
+    announcement_id INT AUTO_INCREMENT PRIMARY KEY,
+    title      VARCHAR(120) NOT NULL,
+    message    VARCHAR(500) NOT NULL,
+    created_by INT DEFAULT NULL,
+    is_active  TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- Latest live air-quality readings (Eco Pulse), kept so the page works offline
+CREATE TABLE IF NOT EXISTS air_readings (
+    reading_id  INT AUTO_INCREMENT PRIMARY KEY,
+    city        VARCHAR(40) NOT NULL,
+    observed_at DATETIME NOT NULL,
+    us_aqi      INT NOT NULL,
+    pm2_5       DECIMAL(6,1) DEFAULT NULL,
+    pm10        DECIMAL(6,1) DEFAULT NULL,
+    fetched_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_city_time (city, observed_at)
 ) ENGINE=InnoDB;

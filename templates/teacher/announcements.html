@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Announcements{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><h1>📢 Announcements</h1></div>
+  <div class="card"><h2>Post to all students</h2>
+    <form method="post" action="{{ url_for('extras.announcements') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="field"><label for="title">Title</label><input type="text" id="title" name="title" required maxlength="120" placeholder="e.g. Plastic-Free Week starts Monday!"></div>
+      <div class="field"><label for="message">Message</label><textarea id="message" name="message" required maxlength="500" style="min-height:80px"></textarea></div>
+      <button class="btn" type="submit">Post announcement</button>
+    </form></div>
+  <h2 class="section">Posted</h2>
+  {% for a in announcements %}
+  <div class="card" style="margin-bottom:.7rem"><div class="row between"><div><strong>{{ a.title }}</strong><br>{{ a.message }}
+      <br><span class="small muted">{{ a.author or '—' }} · {{ a.created_at.strftime('%d %b %Y, %H:%M') }}</span></div>
+    <form method="post" action="{{ url_for('extras.announcement_delete', aid=a.announcement_id) }}" data-confirm="Remove this announcement?">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-danger btn-sm" type="submit">Remove</button></form></div></div>
+  {% else %}<p class="empty">No announcements yet.</p>{% endfor %}
+</div>
+{% endblock %}

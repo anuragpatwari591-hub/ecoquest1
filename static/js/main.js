@@ -74,6 +74,7 @@ document.querySelectorAll("form[data-confirm]").forEach(function (form) {
           });
           answeredCount++;
           if (res.is_correct) { combo++; correctCount++; } else { combo = 0; }
+          sfx(res.is_correct ? "ok" : "bad");
           var fb = q.querySelector("[data-feedback]");
           fb.className = "feedback " + (res.is_correct ? "ok" : "bad");
           fb.textContent = (res.is_correct ? "✅ Correct! +10 XP" : "❌ Not quite.") + (res.explanation ? " " + res.explanation : "") +
@@ -101,6 +102,9 @@ function drawChart(id, type, labels, datasets, extra) {
   var canvas = document.getElementById(id);
   if (!canvas || typeof Chart === "undefined") return;
   var palette = ["#16a34a", "#0284c7", "#f59e0b", "#7c3aed", "#dc2626", "#0d9488"];
+  var dark = document.documentElement.getAttribute("data-theme") === "dark";
+  Chart.defaults.color = dark ? "#cbd5e1" : "#374151";
+  Chart.defaults.borderColor = dark ? "rgba(255,255,255,.12)" : "rgba(0,0,0,.1)";
   datasets.forEach(function (d, i) {
     if (!d.backgroundColor) d.backgroundColor = type === "doughnut" ? palette : palette[i % palette.length];
   });
@@ -111,3 +115,52 @@ function drawChart(id, type, labels, datasets, extra) {
       plugins: { legend: { display: datasets.length > 1 || type === "doughnut" } } }, extra || {})
   });
 }
+
+// ---------------------------------------------------------------- dark mode toggle
+(function () {
+  var btn = document.getElementById("themeToggle");
+  if (!btn) return;
+  function label() { btn.textContent = document.documentElement.getAttribute("data-theme") === "dark" ? "☀️" : "🌙"; }
+  label();
+  btn.addEventListener("click", function () {
+    var dark = document.documentElement.getAttribute("data-theme") === "dark";
+    document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+    try { localStorage.setItem("eq-theme", dark ? "light" : "dark"); } catch (e) {}
+    label();
+  });
+})();
+
+// ---------------------------------------------------------------- sound effects (Web Audio, no sound files)
+var muted = false;
+try { muted = localStorage.getItem("eq-mute") === "1"; } catch (e) {}
+var audioCtx = null;
+function sfx(kind) {
+  if (muted) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    var notes = { ok: [660, 880], bad: [220, 180], level: [523, 659, 784, 1047] }[kind] || [440];
+    notes.forEach(function (f, i) {
+      var o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime + i * 0.11;
+      o.type = kind === "bad" ? "sawtooth" : "triangle";
+      o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+      o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + 0.2);
+    });
+  } catch (e) {}
+}
+window.sfx = sfx;
+(function () {
+  var btn = document.getElementById("soundToggle");
+  if (btn) {
+    btn.textContent = muted ? "🔇" : "🔊";
+    btn.addEventListener("click", function () {
+      muted = !muted;
+      btn.textContent = muted ? "🔇" : "🔊";
+      try { localStorage.setItem("eq-mute", muted ? "1" : "0"); } catch (e) {}
+    });
+  }
+  if (document.querySelector(".alert-levelup")) setTimeout(function () { sfx("level"); }, 300);
+  else if (document.querySelector(".alert-badge")) setTimeout(function () { sfx("ok"); }, 300);
+})();

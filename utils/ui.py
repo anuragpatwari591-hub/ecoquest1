@@ -9,6 +9,8 @@ def flash_rewards(result, headline):
         flash(f"🔥 Streak bonus! +{result['bonus']} XP included", "success")
     if result.get("quest_bonus"):
         flash(f"🎯 All daily quests complete! +{result['quest_bonus']} XP bonus included", "success")
+    if result.get("weekly_bonus"):
+        flash(f"📅 Weekly goal reached! +{result['weekly_bonus']} XP bonus included", "success")
     if result.get("level_up"):
         flash(f"🎉 LEVEL UP! You reached Level {result['level_up']} — your Eco City is getting cleaner!", "levelup")
     for badge in result["badges"]:

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Eco Pulse — {{ city }}{% endblock %}
+{% block content %}
+<div class="container page">
+  <div class="page-head"><div><h1>🌫️ Eco Pulse — {{ city }}</h1>
+    <p class="muted">Your daily air-quality check-in. Predict today's air, see the live index, learn one eco fact.</p></div>
+    <span class="chip">{{ today.strftime('%A, %d %b %Y') }}</span></div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      {% if not data and not stored %}
+        <h2>Live data unavailable</h2>
+        <p class="muted">EcoQuest could not reach the air-quality service (internet needed). Try again later — no XP is awarded without live data.</p>
+      {% elif not reveal %}
+        <h2>🔒 Today's air is hidden</h2>
+        <p>Make your prediction to reveal {{ city }}'s live Air Quality Index.</p>
+        <p class="small muted">Correct = <strong>+{{ xp_ok }} XP</strong> · wrong = <strong>+{{ xp_try }} XP</strong> for checking in. Once per day.</p>
+        <form method="post" action="{{ url_for('pulse.guess') }}" class="grid" style="gap:.6rem">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          {% for key, label in guesses.items() %}
+          <button class="bin-btn" type="submit" name="guess" value="{{ key }}">{{ ['😊','😷','🚨'][loop.index0] }} {{ label }}</button>
+          {% endfor %}
+        </form>
+      {% else %}
+        <div class="aqi-dial" style="--c: {{ cat.colour }}">
+          <div class="aqi-num">{{ aqi }}</div><div class="aqi-lab">US AQI</div>
+        </div>
+        <h2 class="center" style="color:{{ cat.colour }}">{{ cat.emoji }} {{ cat.name }}</h2>
+        {% if data %}
+          <p class="center small">PM2.5 <strong>{{ data.pm25 }}</strong> µg/m³ · PM10 <strong>{{ data.pm10 }}</strong> µg/m³ · updated {{ data.time }}</p>
+        {% else %}
+          <p class="center small muted">Offline — showing the last saved reading ({{ stored.observed_at }}).</p>
+        {% endif %}
+        {% if checkin %}<p class="center"><span class="chip">✔ {{ checkin.description }} (+{{ checkin.xp_change }} XP)</span></p>{% endif %}
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>💡 Eco fact of the day</h2>
+      <p style="font-size:1.05rem">{{ fact }}</p>
+      {% if reveal and tips %}
+        <h3 style="margin-top:1rem">What to do today</h3>
+        <ul class="keypoints">{% for t in tips %}<li>{{ t }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if reveal and data and data.history %}
+  <div class="card section"><h2>📊 {{ city }} — daily average AQI (last week)</h2>
+    <div class="chart-box" style="height:250px"><canvas id="aqiChart" role="img" aria-label="Daily average AQI for the last week"></canvas></div></div>
+  {% endif %}
+
+  <div class="grid grid-2 section">
+    <div class="card"><h2>AQI scale</h2>
+      {% for lo, hi, name, colour, emoji in categories %}
+      <div class="row small" style="margin:.25rem 0"><span class="dot" style="background:{{ colour }}"></span><strong style="width:80px">{{ lo }}–{{ hi if hi < 1000 else '500+' }}</strong> {{ emoji }} {{ name }}</div>
+      {% endfor %}
+    </div>
+    <div class="card"><h2>Your recent check-ins</h2>
+      {% for r in recent %}<div class="row between small" style="border-bottom:1px solid var(--line);padding:.3rem 0"><span>{{ r.description }}</span><strong>+{{ r.xp_change }}</strong></div>
+      {% else %}<p class="empty">No check-ins yet. Make your first prediction!</p>{% endfor %}
+    </div>
+  </div>
+  <p class="small muted section">Source: {{ source }}. Values are model estimates for {{ city }} and may differ from individual monitoring stations.</p>
+</div>
+{% endblock %}
+{% block scripts %}
+{% if reveal and data and data.history %}
+<script src="{{ url_for('static', filename='js/chart.umd.min.js') }}"></script>
+<script>
+  var h = {{ data.history|tojson }};
+  drawChart("aqiChart", "bar", h.map(function (d) { return d.day.slice(5); }),
+    [{label: "Daily average US AQI", data: h.map(function (d) { return d.aqi; }),
+      backgroundColor: h.map(function (d) { return d.aqi <= 50 ? "#16a34a" : d.aqi <= 100 ? "#ca8a04" : d.aqi <= 150 ? "#ea580c" : d.aqi <= 200 ? "#dc2626" : "#7c3aed"; })}],
+    {scales: {y: {beginAtZero: true}}});
+</script>
+{% endif %}
+{% endblock %}

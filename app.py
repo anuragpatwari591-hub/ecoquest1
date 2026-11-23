@@ -21,9 +21,11 @@ def create_app(testing=False):
     from routes.quiz import quiz_bp
     from routes.challenge import challenge_bp
     from routes.games import games_bp
+    from routes.pulse import pulse_bp
+    from routes.extras import extras_bp
     from routes.teacher import teacher_bp
     from routes.admin import admin_bp
-    for bp in (auth_bp, student_bp, quiz_bp, challenge_bp, games_bp, teacher_bp, admin_bp):
+    for bp in (auth_bp, student_bp, quiz_bp, challenge_bp, games_bp, pulse_bp, extras_bp, teacher_bp, admin_bp):
         app.register_blueprint(bp)
 
     # ---- CSRF protection: every POST must carry the token stored in the session

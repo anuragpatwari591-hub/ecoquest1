@@ -2,7 +2,7 @@
 {% block title %}Students{% endblock %}
 {% block content %}
 <div class="container page">
-  <div class="page-head"><h1>Students</h1>
+  <div class="page-head"><h1>Students <a class="btn btn-outline btn-sm" href="{{ url_for('extras.students_csv') }}">⬇ Export CSV</a></h1>
     <form method="get" class="row"><label for="class_name" class="muted" style="margin:0">Class</label>
       <select id="class_name" name="class_name" style="width:auto"><option value="">All classes</option>
         {% for c in classes %}<option value="{{ c }}" {% if c == class_name %}selected{% endif %}>{{ c }}</option>{% endfor %}</select>
